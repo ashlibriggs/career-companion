@@ -1,7 +1,6 @@
-import Button from './Button' 
+import Button from './Button'
 
-
-function GuidanceCard() {
+function GuidanceCard({ onBegin }) {
   return (
     <section className="guidance-card" aria-labelledby="next-best-step-title">
       <p className="guidance-card__label">Your Next Best Step</p>
@@ -27,11 +26,11 @@ function GuidanceCard() {
       </div>
 
       <div className="guidance-card__actions">
-  <Button>Begin</Button>
+        <Button onClick={onBegin}>Begin</Button>
 
-<Button variant="secondary">
-  View All Next Steps
-</Button>
+        <Button variant="secondary">
+          View All Next Steps
+        </Button>
       </div>
     </section>
   )
