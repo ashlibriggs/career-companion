@@ -1,0 +1,309 @@
+.tracker-page {
+  width: min(100%, 74rem);
+  margin: 0 auto;
+}
+
+.tracker-page__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-bottom: 1.75rem;
+}
+
+.tracker-page__eyebrow {
+  margin: 0 0 0.5rem;
+  color: var(--color-accent, #52796f);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tracker-page__header h1 {
+  margin: 0;
+  color: var(--color-text-primary, #26332f);
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.1;
+}
+
+.tracker-page__intro {
+  max-width: 42rem;
+  margin: 0.75rem 0 0;
+  color: var(--color-text-secondary, #62706b);
+  line-height: 1.7;
+}
+
+.tracker-page__count {
+  display: flex;
+  min-width: 10rem;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--color-border, #dbe3df);
+  border-radius: 1rem;
+  background: var(--color-surface, #ffffff);
+  text-align: center;
+}
+
+.tracker-page__count strong {
+  color: var(--color-accent, #52796f);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.tracker-page__count span {
+  margin-top: 0.4rem;
+  color: var(--color-text-secondary, #62706b);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.tracker-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.tracker-card {
+  padding: 1.4rem;
+  border: 1px solid var(--color-border, #dbe3df);
+  border-radius: 1rem;
+  background: var(--color-surface, #ffffff);
+  box-shadow: 0 0.5rem 1.5rem rgb(35 52 47 / 5%);
+}
+
+.tracker-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.tracker-card__company {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.9rem;
+  min-width: 0;
+}
+
+.tracker-card__logo,
+.tracker-card__logo-placeholder {
+  width: 3rem;
+  height: 3rem;
+  flex: 0 0 3rem;
+  border: 1px solid var(--color-border, #dbe3df);
+  border-radius: 0.75rem;
+  background: #ffffff;
+}
+
+.tracker-card__logo {
+  object-fit: contain;
+}
+
+.tracker-card__logo-placeholder {
+  display: grid;
+  place-items: center;
+  background: var(--color-background-soft, #eef4f1);
+  color: var(--color-accent, #52796f);
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.tracker-card__company-name {
+  margin: 0 0 0.25rem;
+  color: var(--color-text-secondary, #62706b);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.tracker-card h2 {
+  margin: 0;
+  color: var(--color-text-primary, #26332f);
+  font-size: 1.2rem;
+  line-height: 1.35;
+}
+
+.tracker-card__status {
+  flex-shrink: 0;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  background: var(--color-background-soft, #eef4f1);
+  color: var(--color-accent, #52796f);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.tracker-card__details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.tracker-card__details span {
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  background: var(--color-background-soft, #f2f5f3);
+  color: var(--color-text-secondary, #596761);
+  font-size: 0.8rem;
+}
+
+.tracker-card__dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  margin: 1rem 0 0;
+  padding: 1rem 0;
+  border-top: 1px solid var(--color-border, #e1e7e4);
+  border-bottom: 1px solid var(--color-border, #e1e7e4);
+}
+
+.tracker-card__dates div {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.tracker-card__dates dt {
+  color: var(--color-text-secondary, #76817d);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tracker-card__dates dd {
+  margin: 0;
+  color: var(--color-text-primary, #26332f);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.tracker-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.tracker-card__apply-link,
+.tracker-card__remove-button,
+.tracker-card__disabled-link {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1rem;
+  border-radius: 0.7rem;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.tracker-card__apply-link {
+  border: 1px solid transparent;
+  background: var(--color-accent, #52796f);
+  color: #ffffff;
+}
+
+.tracker-card__apply-link:hover {
+  filter: brightness(0.94);
+}
+
+.tracker-card__remove-button {
+  border: 1px solid var(--color-border, #cbd6d1);
+  background: transparent;
+  color: var(--color-text-secondary, #596761);
+  cursor: pointer;
+}
+
+.tracker-card__remove-button:hover {
+  border-color: #a94f4f;
+  color: #a94f4f;
+}
+
+.tracker-card__disabled-link {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.tracker-empty-state {
+  display: grid;
+  justify-items: center;
+  padding: 4rem 1.5rem;
+  border: 1px dashed var(--color-border, #cad6d1);
+  border-radius: 1rem;
+  background: var(--color-surface, #ffffff);
+  text-align: center;
+}
+
+.tracker-empty-state__icon {
+  display: grid;
+  width: 4rem;
+  height: 4rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-background-soft, #eef4f1);
+  color: var(--color-accent, #52796f);
+  font-size: 2rem;
+}
+
+.tracker-empty-state h2 {
+  margin: 1rem 0 0;
+  color: var(--color-text-primary, #26332f);
+}
+
+.tracker-empty-state p {
+  max-width: 30rem;
+  margin: 0.75rem 0 1.25rem;
+  color: var(--color-text-secondary, #62706b);
+  line-height: 1.6;
+}
+
+.tracker-empty-state__link {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1rem;
+  border-radius: 0.7rem;
+  background: var(--color-accent, #52796f);
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.tracker-empty-state__link:hover {
+  filter: brightness(0.94);
+}
+
+@media (max-width: 42rem) {
+  .tracker-page__header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .tracker-page__count {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .tracker-card__top {
+    flex-direction: column;
+  }
+
+  .tracker-card__status {
+    margin-left: 3.9rem;
+  }
+
+  .tracker-card__actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .tracker-card__apply-link,
+  .tracker-card__remove-button,
+  .tracker-card__disabled-link {
+    width: 100%;
+  }
+}
