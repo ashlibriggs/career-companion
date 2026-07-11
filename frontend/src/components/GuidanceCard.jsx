@@ -1,3 +1,6 @@
+import Button from './Button' 
+
+
 function GuidanceCard() {
   return (
     <section className="guidance-card" aria-labelledby="next-best-step-title">
@@ -24,13 +27,11 @@ function GuidanceCard() {
       </div>
 
       <div className="guidance-card__actions">
-        <button type="button" className="button button--primary">
-          Begin
-        </button>
+  <Button>Begin</Button>
 
-        <button type="button" className="button button--secondary">
-          View All Next Steps
-        </button>
+<Button variant="secondary">
+  View All Next Steps
+</Button>
       </div>
     </section>
   )

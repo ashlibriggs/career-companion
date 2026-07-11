@@ -1,0 +1,37 @@
+.today-page {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 900px;
+}
+
+.today-header {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.today-header__eyebrow {
+  color: var(--color-primary);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.today-header h1 {
+  font-size: 2.5rem;
+  line-height: 1.1;
+}
+
+.today-header__message {
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+}
+
+.today-page__content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+
