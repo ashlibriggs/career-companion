@@ -1,22 +1,117 @@
 import { useEffect, useState } from "react";
 import {
-  getSavedOpportunities,
-  removeSavedOpportunity,
-} from "../utils/savedOpportunities";
+  deleteSavedJob,
+  getSavedJobs,
+} from "../services/savedJobsApi";
 import "./TrackerPage.css";
 
 function TrackerPage() {
-  const [savedOpportunities, setSavedOpportunities] = useState([]);
+  const [savedOpportunities, setSavedOpportunities] =
+    useState([]);
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const [removingSavedJobId, setRemovingSavedJobId] =
+    useState(null);
+
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
-    setSavedOpportunities(getSavedOpportunities());
-  }, []);
+    let shouldUpdateState = true;
 
-  function handleRemoveOpportunity(opportunityId) {
-    const updatedOpportunities =
-      removeSavedOpportunity(opportunityId);
+    async function loadSavedOpportunities() {
+      setIsLoading(true);
+      setErrorMessage("");
 
-    setSavedOpportunities(updatedOpportunities);
+      try {
+        const results = await getSavedJobs();
+
+        if (shouldUpdateState) {
+          setSavedOpportunities(results);
+        }
+      } catch (error) {
+        console.error(error);
+
+        if (shouldUpdateState) {
+          setSavedOpportunities([]);
+
+          if (error.status === 401) {
+            setErrorMessage(
+              "Your session has expired. Please log in again."
+            );
+          } else {
+            setErrorMessage(
+              "We could not load your tracker. Please try again."
+            );
+          }
+        }
+      } finally {
+        if (shouldUpdateState) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    loadSavedOpportunities();
+
+    return () => {
+      shouldUpdateState = false;
+    };
+  }, [retryCount]);
+
+  async function handleRemoveOpportunity(savedJobId) {
+    if (removingSavedJobId === savedJobId) {
+      return;
+    }
+
+    setRemovingSavedJobId(savedJobId);
+    setErrorMessage("");
+
+    try {
+      await deleteSavedJob(savedJobId);
+
+      setSavedOpportunities(
+        (currentSavedOpportunities) =>
+          currentSavedOpportunities.filter(
+            (opportunity) =>
+              opportunity.databaseId !== savedJobId
+          )
+      );
+    } catch (error) {
+      console.error(error);
+
+      if (error.status === 401) {
+        setErrorMessage(
+          "Your session has expired. Please log in again."
+        );
+      } else if (error.status === 404) {
+        setSavedOpportunities(
+          (currentSavedOpportunities) =>
+            currentSavedOpportunities.filter(
+              (opportunity) =>
+                opportunity.databaseId !== savedJobId
+            )
+        );
+
+        setErrorMessage(
+          "That opportunity was no longer in your tracker."
+        );
+      } else {
+        setErrorMessage(
+          "We could not remove that opportunity. Please try again."
+        );
+      }
+    } finally {
+      setRemovingSavedJobId(null);
+    }
+  }
+
+  function handleRetry() {
+    setRetryCount(
+      (currentRetryCount) => currentRetryCount + 1
+    );
   }
 
   return (
@@ -36,25 +131,52 @@ function TrackerPage() {
         </div>
 
         <div className="tracker-page__count">
-          <strong>{savedOpportunities.length}</strong>
+          <strong>
+            {isLoading ? "…" : savedOpportunities.length}
+          </strong>
 
           <span>
-            {savedOpportunities.length === 1
-              ? "saved opportunity"
-              : "saved opportunities"}
+            {!isLoading &&
+              (savedOpportunities.length === 1
+                ? "saved opportunity"
+                : "saved opportunities")}
           </span>
         </div>
       </header>
 
-      {savedOpportunities.length === 0 ? (
+      {errorMessage && (
+        <div
+          className="tracker-state tracker-error-state"
+          role="alert"
+        >
+          <p>{errorMessage}</p>
+
+          {!isLoading && (
+            <button
+              type="button"
+              onClick={handleRetry}
+            >
+              Try again
+            </button>
+          )}
+        </div>
+      )}
+
+      {isLoading ? (
+        <TrackerLoadingState />
+      ) : savedOpportunities.length === 0 ? (
         <TrackerEmptyState />
       ) : (
         <div className="tracker-list">
           {savedOpportunities.map((opportunity) => (
             <TrackerOpportunityCard
-              key={opportunity.id}
+              key={opportunity.databaseId}
               opportunity={opportunity}
               onRemove={handleRemoveOpportunity}
+              isRemoving={
+                removingSavedJobId ===
+                opportunity.databaseId
+              }
             />
           ))}
         </div>
@@ -66,6 +188,7 @@ function TrackerPage() {
 function TrackerOpportunityCard({
   opportunity,
   onRemove,
+  isRemoving,
 }) {
   const savedDate = formatDate(opportunity.savedAt);
   const publishedDate = formatDate(
@@ -101,14 +224,22 @@ function TrackerOpportunityCard({
         </div>
 
         <span className="tracker-card__status">
-          {opportunity.trackerStatus || "Saved"}
+          {formatStatus(opportunity.trackerStatus)}
         </span>
       </div>
 
       <div className="tracker-card__details">
-        <span>{opportunity.location}</span>
-        <span>{opportunity.jobType}</span>
-        <span>{opportunity.salary}</span>
+        <span>
+          {opportunity.location || "Location not listed"}
+        </span>
+
+        <span>
+          {opportunity.jobType || "Job type not listed"}
+        </span>
+
+        <span>
+          {opportunity.salary || "Salary not listed"}
+        </span>
       </div>
 
       <dl className="tracker-card__dates">
@@ -128,7 +259,9 @@ function TrackerOpportunityCard({
 
         <div>
           <dt>Source</dt>
-          <dd>{opportunity.source || "External listing"}</dd>
+          <dd>
+            {opportunity.source || "External listing"}
+          </dd>
         </div>
       </dl>
 
@@ -152,12 +285,35 @@ function TrackerOpportunityCard({
         <button
           className="tracker-card__remove-button"
           type="button"
-          onClick={() => onRemove(opportunity.id)}
+          disabled={isRemoving}
+          onClick={() =>
+            onRemove(opportunity.databaseId)
+          }
         >
-          Remove from tracker
+          {isRemoving
+            ? "Removing…"
+            : "Remove from tracker"}
         </button>
       </div>
     </article>
+  );
+}
+
+function TrackerLoadingState() {
+  return (
+    <div
+      className="tracker-loading"
+      role="status"
+      aria-live="polite"
+    >
+      <div className="tracker-card tracker-loading-card" />
+      <div className="tracker-card tracker-loading-card" />
+      <div className="tracker-card tracker-loading-card" />
+
+      <span className="sr-only">
+        Loading saved opportunities
+      </span>
+    </div>
   );
 }
 
@@ -179,11 +335,11 @@ function TrackerEmptyState() {
       </p>
 
       <a
-  className="tracker-empty-state__link"
-  href="/opportunities"
->
-  Find opportunities
-</a>
+        className="tracker-empty-state__link"
+        href="/opportunities"
+      >
+        Find opportunities
+      </a>
     </div>
   );
 }
@@ -206,8 +362,25 @@ function formatDate(dateValue) {
   }).format(date);
 }
 
+function formatStatus(status) {
+  if (!status) {
+    return "Saved";
+  }
+
+  return status
+    .split("_")
+    .map(
+      (word) =>
+        word.charAt(0).toUpperCase() +
+        word.slice(1)
+    )
+    .join(" ");
+}
+
 function getCompanyInitial(companyName) {
-  return companyName?.trim().charAt(0).toUpperCase() || "C";
+  return (
+    companyName?.trim().charAt(0).toUpperCase() || "C"
+  );
 }
 
 export default TrackerPage;

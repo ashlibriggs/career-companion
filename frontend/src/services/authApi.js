@@ -1,4 +1,4 @@
-const API_BASE_URL = "http://127.0.0.1:5000/api/auth";
+const API_BASE_URL = "http://localhost:5001/api/auth";
 
 async function request(endpoint, options = {}) {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
@@ -10,7 +10,13 @@ async function request(endpoint, options = {}) {
     ...options,
   });
 
-  const data = await response.json();
+  let data;
+
+  try {
+    data = await response.json();
+  } catch {
+    data = {};
+  }
 
   if (!response.ok) {
     throw new Error(data.error || "Something went wrong.");

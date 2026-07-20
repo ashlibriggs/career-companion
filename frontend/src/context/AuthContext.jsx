@@ -40,9 +40,14 @@ export function AuthProvider({ children }) {
   }
 
   async function logout() {
-    await logoutRequest();
-    setUser(null);
-  }
+    try {
+      await logoutRequest();
+      setUser(null);
+    } catch (error) {
+      console.error("Logout failed:", error);
+      throw error;
+    }
+}
 
   const value = {
     user,

@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import OpportunityCard from "../components/opportunities/OpportunityCard";
 import { fetchOpportunities } from "../services/jobsApi";
 import {
-  getSavedOpportunities,
-  toggleSavedOpportunity,
-} from "../utils/savedOpportunities";
+  createSavedJob,
+  deleteSavedJob,
+  getSavedJobs,
+} from "../services/savedJobsApi";
 import "./OpportunitiesPage.css";
 
 const INITIAL_SEARCH_TERM = "software engineer";
@@ -20,12 +21,20 @@ function OpportunitiesPage() {
 
   const [opportunities, setOpportunities] = useState([]);
 
-  const [savedOpportunityIds, setSavedOpportunityIds] =
-    useState(() => getSavedOpportunityIds());
+  const [savedJobs, setSavedJobs] = useState([]);
 
   const [isLoading, setIsLoading] = useState(true);
 
+  const [isLoadingSavedJobs, setIsLoadingSavedJobs] =
+    useState(true);
+
+  const [pendingOpportunityId, setPendingOpportunityId] =
+    useState(null);
+
   const [errorMessage, setErrorMessage] = useState("");
+
+  const [savedJobsErrorMessage, setSavedJobsErrorMessage] =
+    useState("");
 
   const [retryCount, setRetryCount] = useState(0);
 
@@ -68,6 +77,43 @@ function OpportunitiesPage() {
     };
   }, [activeSearchTerm, retryCount]);
 
+  useEffect(() => {
+    let shouldUpdateState = true;
+
+    async function loadSavedJobs() {
+      setIsLoadingSavedJobs(true);
+      setSavedJobsErrorMessage("");
+
+      try {
+        const results = await getSavedJobs();
+
+        if (shouldUpdateState) {
+          setSavedJobs(results);
+        }
+      } catch (error) {
+        console.error(error);
+
+        if (shouldUpdateState) {
+          setSavedJobs([]);
+
+          setSavedJobsErrorMessage(
+            "We could not load your saved opportunities."
+          );
+        }
+      } finally {
+        if (shouldUpdateState) {
+          setIsLoadingSavedJobs(false);
+        }
+      }
+    }
+
+    loadSavedJobs();
+
+    return () => {
+      shouldUpdateState = false;
+    };
+  }, []);
+
   function handleSearchSubmit(event) {
     event.preventDefault();
 
@@ -80,10 +126,78 @@ function OpportunitiesPage() {
     setActiveSearchTerm(cleanedSearchInput);
   }
 
-  function handleToggleSave(opportunity) {
-    toggleSavedOpportunity(opportunity);
+  async function handleToggleSave(opportunity) {
+    const opportunityId = String(opportunity.id);
 
-    setSavedOpportunityIds(getSavedOpportunityIds());
+    if (pendingOpportunityId === opportunityId) {
+      return;
+    }
+
+    setPendingOpportunityId(opportunityId);
+    setSavedJobsErrorMessage("");
+
+    const existingSavedJob = findSavedJob(
+      savedJobs,
+      opportunity
+    );
+
+    try {
+      if (existingSavedJob) {
+        await deleteSavedJob(existingSavedJob.databaseId);
+
+        setSavedJobs((currentSavedJobs) =>
+          currentSavedJobs.filter(
+            (savedJob) =>
+              savedJob.databaseId !==
+              existingSavedJob.databaseId
+          )
+        );
+
+        return;
+      }
+
+      const createdSavedJob = await createSavedJob({
+        ...opportunity,
+        externalJobId: opportunityId,
+      });
+
+      setSavedJobs((currentSavedJobs) => [
+        createdSavedJob,
+        ...currentSavedJobs,
+      ]);
+    } catch (error) {
+      console.error(error);
+
+      if (error.status === 409) {
+        try {
+          const refreshedSavedJobs = await getSavedJobs();
+
+          setSavedJobs(refreshedSavedJobs);
+
+          setSavedJobsErrorMessage(
+            "This opportunity is already in your tracker."
+          );
+        } catch (refreshError) {
+          console.error(refreshError);
+
+          setSavedJobsErrorMessage(
+            "This opportunity may already be saved. Refresh the page and try again."
+          );
+        }
+      } else if (error.status === 401) {
+        setSavedJobsErrorMessage(
+          "Your session has expired. Please log in again."
+        );
+      } else {
+        setSavedJobsErrorMessage(
+          existingSavedJob
+            ? "We could not remove that opportunity. Please try again."
+            : "We could not save that opportunity. Please try again."
+        );
+      }
+    } finally {
+      setPendingOpportunityId(null);
+    }
   }
 
   function handleRetry() {
@@ -150,12 +264,24 @@ function OpportunitiesPage() {
         )}
 
         <p>
-          <strong>{savedOpportunityIds.length}</strong>{" "}
-          {savedOpportunityIds.length === 1
-            ? "opportunity saved"
-            : "opportunities saved"}
+          <strong>
+            {isLoadingSavedJobs ? "…" : savedJobs.length}
+          </strong>{" "}
+          {!isLoadingSavedJobs &&
+            (savedJobs.length === 1
+              ? "opportunity saved"
+              : "opportunities saved")}
         </p>
       </div>
+
+      {savedJobsErrorMessage && (
+        <div
+          className="opportunities-state opportunity-error-state"
+          role="alert"
+        >
+          <p>{savedJobsErrorMessage}</p>
+        </div>
+      )}
 
       {isLoading && <OpportunitiesLoadingState />}
 
@@ -191,16 +317,20 @@ function OpportunitiesPage() {
         !errorMessage &&
         opportunities.length > 0 && (
           <div className="opportunities-list">
-            {opportunities.map((opportunity) => (
-              <OpportunityCard
-                key={opportunity.id}
-                opportunity={opportunity}
-                isSaved={savedOpportunityIds.includes(
-                  String(opportunity.id)
-                )}
-                onToggleSave={handleToggleSave}
-              />
-            ))}
+            {opportunities.map((opportunity) => {
+              const isSaved = Boolean(
+                findSavedJob(savedJobs, opportunity)
+              );
+
+              return (
+                <OpportunityCard
+                  key={opportunity.id}
+                  opportunity={opportunity}
+                  isSaved={isSaved}
+                  onToggleSave={handleToggleSave}
+                />
+              );
+            })}
           </div>
         )}
 
@@ -230,10 +360,30 @@ function OpportunitiesLoadingState() {
   );
 }
 
-function getSavedOpportunityIds() {
-  return getSavedOpportunities().map((opportunity) =>
-    String(opportunity.id)
+function findSavedJob(savedJobs, opportunity) {
+  const opportunityId = String(opportunity.id);
+  const opportunitySource = normalizeSource(
+    opportunity.source
   );
+
+  return savedJobs.find((savedJob) => {
+    const savedExternalJobId = String(
+      savedJob.externalJobId
+    );
+
+    const savedJobSource = normalizeSource(
+      savedJob.source
+    );
+
+    return (
+      savedExternalJobId === opportunityId &&
+      savedJobSource === opportunitySource
+    );
+  });
+}
+
+function normalizeSource(source) {
+  return String(source || "").trim().toLowerCase();
 }
 
 export default OpportunitiesPage;
