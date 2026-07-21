@@ -1,75 +1,78 @@
-const JOBS_API_URL = "https://remotive.com/api/remote-jobs";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:5001";
 
-const DEFAULT_SEARCH_TERM = "software engineer";
+const OPPORTUNITIES_API_URL = `${API_BASE_URL}/api/opportunities`;
 const RESULTS_LIMIT = 20;
 
 /**
- * Fetches remote opportunities from the Remotive public API.
+ * Fetches normalized opportunities from the Career Companion backend.
  *
- * @param {string} searchTerm - User-entered job keyword.
+ * The Flask backend searches supported job providers, including Adzuna
+ * and USAJOBS, and returns every result in one shared data format.
+ *
+ * @param {string} searchTerm - User-entered job title or keyword.
  * @returns {Promise<Array>} Normalized opportunity records.
  */
-export async function fetchOpportunities(
-  searchTerm = DEFAULT_SEARCH_TERM
-) {
-  const cleanedSearchTerm = searchTerm.trim() || DEFAULT_SEARCH_TERM;
+export async function fetchOpportunities(searchTerm = "") {
+  const cleanedSearchTerm = String(searchTerm).trim();
+
+  if (!cleanedSearchTerm) {
+    return [];
+  }
 
   const searchParams = new URLSearchParams({
     search: cleanedSearchTerm,
-    category: "software-dev",
     limit: String(RESULTS_LIMIT),
   });
 
-  const response = await fetch(
-    `${JOBS_API_URL}?${searchParams.toString()}`
-  );
+  let response;
 
-  if (!response.ok) {
+  try {
+    response = await fetch(
+      `${OPPORTUNITIES_API_URL}?${searchParams.toString()}`,
+      {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
+  } catch {
     throw new Error(
-      `Unable to load opportunities. Request failed with status ${response.status}.`
+      "Unable to connect to the opportunities service. Please try again."
     );
   }
 
-  const data = await response.json();
+  const data = await readResponseData(response);
 
-  if (!Array.isArray(data.jobs)) {
-    throw new Error("The opportunities service returned unexpected data.");
+  if (!response.ok) {
+    throw new Error(
+      data.error ||
+        `Unable to load opportunities. Request failed with status ${response.status}.`
+    );
   }
 
-  return data.jobs.map(normalizeOpportunity);
+  if (!Array.isArray(data.results)) {
+    throw new Error(
+      "The opportunities service returned unexpected data."
+    );
+  }
+
+  return data.results;
 }
 
 /**
- * Converts the external API response into the data shape used by our app.
- * Keeping this transformation here prevents components from depending on
- * the exact structure of the third-party API.
+ * Safely reads a JSON response without allowing invalid provider data
+ * to cause an unrelated parsing error in the user interface.
+ *
+ * @param {Response} response - Browser fetch response.
+ * @returns {Promise<Object>} Parsed response data.
  */
-function normalizeOpportunity(job) {
-  return {
-    id: String(job.id),
-    title: job.title || "Untitled opportunity",
-    company: job.company_name || "Company not listed",
-    companyLogo: job.company_logo || "",
-    category: job.category || "Software Development",
-    jobType: formatJobType(job.job_type),
-    location: job.candidate_required_location || "Remote",
-    salary: job.salary || "Salary not listed",
-    description: job.description || "",
-    publishedAt: job.publication_date || "",
-    applicationUrl: job.url || "",
-    source: "Remotive",
-  };
-}
-
-function formatJobType(jobType) {
-  if (!jobType) {
-    return "Job type not listed";
+async function readResponseData(response) {
+  try {
+    return await response.json();
+  } catch {
+    return {};
   }
-
-  return jobType
-    .split("_")
-    .map((word) => {
-      return word.charAt(0).toUpperCase() + word.slice(1);
-    })
-    .join(" ");
 }

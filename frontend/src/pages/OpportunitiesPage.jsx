@@ -1,4 +1,9 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+} from "react";
+
+import { useSearchParams } from "react-router-dom";
 import OpportunityCard from "../components/opportunities/OpportunityCard";
 import { fetchOpportunities } from "../services/jobsApi";
 import {
@@ -8,22 +13,25 @@ import {
 } from "../services/savedJobsApi";
 import "./OpportunitiesPage.css";
 
-const INITIAL_SEARCH_TERM = "software engineer";
-
 function OpportunitiesPage() {
-  const [searchInput, setSearchInput] = useState(
-    INITIAL_SEARCH_TERM
+  const [searchParams, setSearchParams] =
+  useSearchParams();
+
+  const [searchInput, setSearchInput] =
+  useState(
+    searchParams.get("search") ?? ""
   );
 
-  const [activeSearchTerm, setActiveSearchTerm] = useState(
-    INITIAL_SEARCH_TERM
+  const [activeSearchTerm, setActiveSearchTerm] =
+  useState(
+    searchParams.get("search") ?? ""
   );
 
   const [opportunities, setOpportunities] = useState([]);
 
   const [savedJobs, setSavedJobs] = useState([]);
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [isLoadingSavedJobs, setIsLoadingSavedJobs] =
     useState(true);
@@ -39,6 +47,10 @@ function OpportunitiesPage() {
   const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
+    if (!activeSearchTerm) {
+      return undefined;
+    }
+
     let shouldUpdateState = true;
 
     async function loadOpportunities() {
@@ -60,7 +72,8 @@ function OpportunitiesPage() {
           setOpportunities([]);
 
           setErrorMessage(
-            "We could not load opportunities right now. Check your connection and try again."
+            error.message ||
+              "We could not load opportunities right now. Check your connection and try again."
           );
         }
       } finally {
@@ -123,17 +136,26 @@ function OpportunitiesPage() {
       return;
     }
 
-    setActiveSearchTerm(cleanedSearchInput);
+    setOpportunities([]);
+    setErrorMessage("");
+    setSearchParams({
+      search: cleanedSearchInput,
+    });
+
+    setActiveSearchTerm(
+      cleanedSearchInput
+    );
   }
 
   async function handleToggleSave(opportunity) {
     const opportunityId = String(opportunity.id);
+    const pendingId = createOpportunityKey(opportunity);
 
-    if (pendingOpportunityId === opportunityId) {
+    if (pendingOpportunityId === pendingId) {
       return;
     }
 
-    setPendingOpportunityId(opportunityId);
+    setPendingOpportunityId(pendingId);
     setSavedJobsErrorMessage("");
 
     const existingSavedJob = findSavedJob(
@@ -204,6 +226,9 @@ function OpportunitiesPage() {
     setRetryCount((currentCount) => currentCount + 1);
   }
 
+  const hasCompletedSearch =
+    Boolean(activeSearchTerm) && !isLoading;
+
   return (
     <section className="opportunities-page">
       <header className="opportunities-page__header">
@@ -214,8 +239,9 @@ function OpportunitiesPage() {
         <h1>Find your next opportunity</h1>
 
         <p className="opportunities-page__intro">
-          Search remote roles, save strong matches, and move
-          them into your application tracker.
+          Search technology roles, explore private-sector and
+          federal opportunities, and save strong matches to your
+          application tracker.
         </p>
       </header>
 
@@ -236,7 +262,7 @@ function OpportunitiesPage() {
             className="opportunity-search__input"
             type="search"
             value={searchInput}
-            placeholder="Try React, frontend, or junior developer"
+            placeholder="Search roles like junior developer, data analyst, or product manager"
             onChange={(event) =>
               setSearchInput(event.target.value)
             }
@@ -253,7 +279,7 @@ function OpportunitiesPage() {
       </form>
 
       <div className="opportunities-page__summary">
-        {!isLoading && !errorMessage && (
+        {hasCompletedSearch && !errorMessage && (
           <p>
             <strong>{opportunities.length}</strong>{" "}
             {opportunities.length === 1
@@ -283,6 +309,18 @@ function OpportunitiesPage() {
         </div>
       )}
 
+      {!activeSearchTerm && !isLoading && (
+        <div className="opportunities-state">
+          <h2>Start with the role you want to explore</h2>
+
+          <p>
+            Try a search such as “junior developer,” “data
+            analyst,” “frontend developer,” or “technical product
+            manager.”
+          </p>
+        </div>
+      )}
+
       {isLoading && <OpportunitiesLoadingState />}
 
       {!isLoading && errorMessage && (
@@ -300,15 +338,15 @@ function OpportunitiesPage() {
         </div>
       )}
 
-      {!isLoading &&
+      {hasCompletedSearch &&
         !errorMessage &&
         opportunities.length === 0 && (
           <div className="opportunities-state">
             <h2>No matching opportunities found</h2>
 
             <p>
-              Try a broader search such as “developer,”
-              “frontend,” or “software engineer.”
+              Try a broader search such as “developer,” “analyst,”
+              or “product manager.”
             </p>
           </div>
         )}
@@ -324,7 +362,7 @@ function OpportunitiesPage() {
 
               return (
                 <OpportunityCard
-                  key={opportunity.id}
+                  key={createOpportunityKey(opportunity)}
                   opportunity={opportunity}
                   isSaved={isSaved}
                   onToggleSave={handleToggleSave}
@@ -335,8 +373,8 @@ function OpportunitiesPage() {
         )}
 
       <footer className="opportunities-page__attribution">
-        Opportunities provided by Remotive. Application links
-        open the original listing in a new tab.
+        Opportunities provided by Adzuna and USAJOBS.
+        Application links open the original listing in a new tab.
       </footer>
     </section>
   );
@@ -380,6 +418,12 @@ function findSavedJob(savedJobs, opportunity) {
       savedJobSource === opportunitySource
     );
   });
+}
+
+function createOpportunityKey(opportunity) {
+  return `${normalizeSource(opportunity.source)}-${String(
+    opportunity.id
+  )}`;
 }
 
 function normalizeSource(source) {
