@@ -58,12 +58,12 @@ function OpportunitiesPage() {
       setErrorMessage("");
 
       try {
-        const results = await fetchOpportunities(
+        const response = await fetchOpportunities(
           activeSearchTerm
         );
 
         if (shouldUpdateState) {
-          setOpportunities(results);
+          setOpportunities(response.results);
         }
       } catch (error) {
         console.error(error);

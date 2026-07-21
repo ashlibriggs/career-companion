@@ -1,399 +1,640 @@
 # Career Companion
 
-*A guided job-search companion built with React, designed to help entry-level software engineers, bootcamp students, and career changers stay organized, focused, and confident throughout their career journey.*
+Career Companion is a full-stack web application designed to help aspiring software engineers stay organized throughout their job search. Instead of juggling spreadsheets, notes, bookmarks, and multiple websites, users can manage their opportunities, track applications, organize resumes, and build consistent career habits from one central workspace.
+
+The project was built as the second phase of my Software Engineering capstone and expands the original React application into a production-style full-stack application with authentication, persistent data, relational databases, REST APIs, and a Flask backend.
+
+Rather than focusing solely on finding jobs, Career Companion focuses on helping users answer a much more important question every day:
+
+> **"What's my next best step?"**
 
 ---
 
-## Overview
+## Why I Built Career Companion
 
-Searching for a software engineering job can quickly become overwhelming. Opportunities are spread across multiple job boards, application materials live in different documents, and it is easy to lose momentum while trying to manage everything at once.
+Changing careers into software engineering can feel overwhelming.
 
-Career Companion was created to solve that problem.
+There are job boards everywhere, dozens of resumes, interview preparation, networking, application tracking, and an endless list of advice about what to do next.
 
-Instead of treating the job search as one large task, Career Companion guides users through small, intentional career actions while providing one central workspace for discovering opportunities, tracking applications, organizing resume content, planning next steps, and staying focused on consistent progress.
+I wanted to build something that reduced that complexity.
 
-This project was built as a front-end React application that integrates a live external API while demonstrating component reuse, asynchronous data fetching, state management, routing, and responsive interface design.
+Career Companion combines job discovery with personal productivity so users can spend less time organizing their search and more time making meaningful progress.
 
----
-
-# Product Vision
-
-Career Companion is built around one simple idea:
-
-> **Small, consistent actions build meaningful career growth.**
-
-Rather than overwhelming users with dozens of job postings and disconnected tools, the application encourages steady progress through guided workflows and organized career planning.
-
-The experience is designed specifically for:
-
-- Software Engineering students
-- Bootcamp graduates
-- Career changers
-- Entry-level developers
-- Anyone beginning their first technology job search
+Instead of becoming another job board, the application acts as a personal career workspace that helps users stay focused on consistent forward movement.
 
 ---
 
-# Core Features
+# Features
 
-## Today Dashboard
+## Authentication
 
-The Today page provides users with a focused starting point for each session.
+- Secure user registration
+- Login and logout
+- Password hashing
+- Session-based authentication
+- Protected backend endpoints
+- Personalized user data
+
+---
+
+## Opportunity Search
+
+Search software engineering jobs from multiple public sources including:
+
+- Adzuna
+- USAJOBS
 
 Features include:
 
-- Personalized greeting
-- Guided daily career action
-- Three-stage workflow
-  - Ready
-  - Active
-  - Complete
-- Weekly progress summary
-- Quick navigation to the Action Plan
-
-This page encourages users to focus on one meaningful task rather than becoming overwhelmed by the entire job-search process.
+- Keyword search
+- Pagination
+- Company information
+- Job locations
+- Salary information (when available)
+- Remote opportunities
+- Direct application links
+- Save opportunities for later
 
 ---
 
-## Opportunities
+## Saved Opportunities
 
-Career Companion connects to the **Remotive Public Jobs API** to retrieve live software engineering opportunities.
+Users can save interesting positions without leaving the application.
 
-Users can:
+Saved opportunities include:
 
-- Search by keyword
-- Browse remote software engineering positions
-- View company information
-- Review job type and location
-- Open the original application
-- Save opportunities for later review
-
-The application gracefully handles:
-
-- Loading states
-- Network errors
-- Empty search results
+- Company
+- Position
+- Location
+- Salary
+- Source
+- Apply URL
 
 ---
 
-## Opportunity Tracker
+## Application Tracker
 
-Saved opportunities are stored using browser localStorage so users can return to them later.
+Track progress throughout the application process.
 
-Features include:
+Current statuses include:
 
-- Saved opportunities
-- Remove saved opportunities
-- External application links
-- Persistent storage after refresh
-- Empty-state messaging
+- Interested
+- Applied
+- Interviewing
+- Offer
+- Rejected
 
----
-
-## Resume Workspace
-
-The Resume page provides a lightweight workspace where users can organize resume content before transferring it into a final resume.
-
-Users can save:
-
-- Target role
-- Professional summary
-- Technical skills
-- Experience highlights
-
-Changes are automatically reflected in a live preview and remain available after refreshing the browser.
+This keeps every opportunity organized in one place instead of relying on spreadsheets or scattered notes.
 
 ---
 
 ## Action Plan
 
-The Action Plan breaks the job search into manageable tasks.
+Career Companion also includes a lightweight productivity system.
 
-Users can:
+Users can create their own action items such as:
 
-- Track completed tasks
-- Monitor overall progress
-- Reset their action plan
-- Continue building daily momentum
+- Update resume
+- Practice LeetCode
+- Send networking message
+- Prepare for interview
+- Follow up with recruiter
 
-Progress is automatically saved using localStorage.
+Each action item can be:
+
+- Created
+- Updated
+- Completed
+- Deleted
 
 ---
 
-## Profile
+## Resume Workspace
 
-The Profile page stores personal career preferences including:
+The Resume page provides a dedicated space for organizing resume content.
 
-- Name
-- Target role
-- Preferred location
-- Weekly application goal
+Although currently populated with sample data, the page establishes the foundation for future resume editing and document generation features.
+
+---
+
+## Career Profile
+
+Users can maintain a personal career profile including:
+
 - Career focus
+- Target roles
+- Professional summary
+- Skills
+- Career goals
 
-A live profile summary updates as users edit their information.
+This creates a central location for information commonly reused across job applications.
 
 ---
 
-# Technical Highlights
+# Application Screenshots
 
-Career Companion demonstrates several core React concepts including:
+## Today Dashboard
 
-- Component-based architecture
-- React Router navigation
-- React Hooks
-- Controlled components
-- Asynchronous API requests
-- Dynamic rendering
-- Conditional rendering
-- State management
-- LocalStorage persistence
-- Reusable UI components
-- Responsive layout
+![Today Dashboard](./screenshots/today-dashboard.png)
+
+---
+
+## Opportunity Search
+
+![Opportunity Search](./screenshots/opportunities-search.png)
+
+---
+
+## Application Tracker
+
+![Application Tracker](./screenshots/application-tracker.png)
+
+---
+
+## Resume Workspace
+
+![Resume Workspace](./screenshots/resume-workspace.png)
+
+---
+
+## Action Plan
+
+![Action Plan](./screenshots/action-plan.png)
+
+---
+
+## Career Profile
+
+![Career Profile](./screenshots/career-profile.png)
 
 ---
 
 # Technology Stack
 
-| Technology | Purpose |
-|------------|---------|
-| React | User Interface |
-| Vite | Development & Build Tool |
-| JavaScript (ES6+) | Application Logic |
-| React Router | Client-side Routing |
-| CSS | Styling |
-| Fetch API | External Data Requests |
-| localStorage | Client-side Persistence |
-| Git | Version Control |
-| GitHub | Repository Hosting |
+## Frontend
+
+- React
+- React Router
+- JavaScript (ES6+)
+- CSS3
+- Vite
+
+### Frontend Responsibilities
+
+- Client-side routing
+- Authentication flow
+- Form handling
+- API communication
+- State management
+- Responsive interface
+- Loading and error states
 
 ---
 
-# External API
+## Backend
 
-Career Companion uses the **Remotive Public Jobs API**.
+- Python
+- Flask
+- SQLAlchemy
+- Flask-CORS
+- PostgreSQL
 
-Base Endpoint
+### Backend Responsibilities
 
-```
-https://remotive.com/api/remote-jobs
-```
-
-Example Request
-
-```
-https://remotive.com/api/remote-jobs?search=software engineer&category=software-dev&limit=20
-```
-
-The API data is normalized before being rendered to ensure the UI remains consistent regardless of the response format.
+- Authentication
+- REST API
+- CRUD operations
+- Session management
+- Database relationships
+- External API integration
+- Pagination
 
 ---
 
-# Routing
+## External APIs
 
-The application uses React Router to provide six primary views.
+- Adzuna Jobs API
+- USAJOBS API
 
+---
+
+## Development Tools
+
+- Git
+- GitHub
+- VS Code
+- Postman
+- npm
+- pip
+- PostgreSQL
+
+---
+
+# System Architecture
+
+```mermaid
+flowchart LR
+
+A[React Frontend]
+
+B[Flask REST API]
+
+C[(PostgreSQL)]
+
+D[Adzuna API]
+
+E[USAJOBS API]
+
+A -->|HTTP Requests| B
+
+B -->|SQLAlchemy| C
+
+B -->|Job Search| D
+
+B -->|Federal Jobs| E
+
+C --> B
+
+B --> A
 ```
-/
-├── Today
-├── Opportunities
-├── Tracker
-├── Resume
-├── Action Plan
-└── Profile
+
+---
+
+# High-Level Application Flow
+
+```mermaid
+flowchart TD
+
+User --> Login
+
+Login --> Dashboard
+
+Dashboard --> Opportunities
+
+Dashboard --> Tracker
+
+Dashboard --> ActionPlan
+
+Dashboard --> Resume
+
+Dashboard --> Profile
+
+Opportunities --> SaveJob
+
+SaveJob --> Database
+
+Tracker --> Database
+
+ActionPlan --> Database
+
+Profile --> Database
+```
+
+
+# REST API
+
+The Flask backend exposes a RESTful API that separates the frontend from the application's business logic and database layer. The React application communicates exclusively through these endpoints, allowing the frontend and backend to evolve independently.
+
+---
+
+## Authentication
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/auth/signup` | Register a new user |
+| POST | `/api/auth/login` | Authenticate an existing user |
+| POST | `/api/auth/logout` | End the current session |
+| GET | `/api/auth/me` | Return the currently authenticated user |
+
+---
+
+## Opportunities
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/opportunities` | Search opportunities from Adzuna and USAJOBS |
+
+### Query Parameters
+
+| Parameter | Description |
+|------------|-------------|
+| `search` | Search keyword |
+| `page` | Current page number |
+| `limit` | Results per page |
+
+Example:
+
+```http
+GET /api/opportunities?search=frontend&page=1&limit=10
+```
+
+---
+
+## Saved Jobs
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/saved-jobs` | Retrieve saved jobs |
+| POST | `/api/saved-jobs` | Save a new opportunity |
+| DELETE | `/api/saved-jobs/<id>` | Remove a saved job |
+
+---
+
+## Action Items
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/action-items` | Retrieve action items |
+| POST | `/api/action-items` | Create an action item |
+| PATCH | `/api/action-items/<id>` | Update an action item |
+| DELETE | `/api/action-items/<id>` | Delete an action item |
+
+---
+
+## Profile
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/profile` | Retrieve user profile |
+| PATCH | `/api/profile` | Update career profile |
+
+---
+
+# Database Design
+
+Career Companion uses PostgreSQL with SQLAlchemy ORM to model the application's persistent data.
+
+The schema is intentionally small, making it easy to extend while demonstrating core relational database concepts.
+
+## Entity Relationship Diagram
+
+```mermaid
+erDiagram
+
+USER ||--o{ SAVED_JOB : saves
+
+USER ||--o{ ACTION_ITEM : owns
+
+USER ||--|| PROFILE : has
+
+USER {
+    int id
+    string first_name
+    string last_name
+    string email
+    string password_hash
+}
+
+SAVED_JOB {
+    int id
+    string title
+    string company
+    string location
+    string salary
+    string source
+    string apply_url
+}
+
+ACTION_ITEM {
+    int id
+    string title
+    boolean completed
+}
+
+PROFILE {
+    int id
+    string career_focus
+    string professional_summary
+    string target_role
+    string skills
+}
 ```
 
 ---
 
 # Project Structure
 
-```
-career-companion
+```text
+career-companion/
 │
+├── backend/
+│   ├── app.py
+│   ├── config.py
+│   ├── models.py
+│   ├── seed.py
+│   ├── migrations/
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── context/
+│   │   ├── hooks/
+│   │   ├── layouts/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── styles/
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   │
+│   ├── public/
+│   └── package.json
+│
+├── screenshots/
 ├── README.md
-│
-└── frontend
-    │
-    ├── src
-    │
-    ├── components
-    │      ├── AppLayout
-    │      ├── Sidebar
-    │      ├── Button
-    │      ├── Greeting
-    │      ├── GuidanceCard
-    │      ├── GuidedSession
-    │      ├── CompletionCard
-    │      ├── ProgressSummary
-    │      ├── PageCard
-    │      └── opportunities
-    │
-    ├── pages
-    │
-    ├── services
-    │
-    ├── utils
-    │
-    ├── App.jsx
-    └── main.jsx
-```
-
----
-
-# Installation
-
-Clone the repository
-
-```bash
-git clone https://github.com/ashlibriggs/career-companion.git
-```
-
-Navigate into the project
-
-```bash
-cd career-companion/frontend
-```
-
-Install dependencies
-
-```bash
-npm install
-```
-
-Run the development server
-
-```bash
-npm run dev
-```
-
-Create a production build
-
-```bash
-npm run build
+└── .gitignore
 ```
 
 ---
 
 # Engineering Decisions
 
-Several design decisions were intentionally made during development.
+Every project involves tradeoffs. Rather than adding features simply because they were available, I tried to make decisions that improved the overall product while keeping the application maintainable.
 
-### Component Reuse
+## React + Flask
 
-Reusable components such as Buttons, Cards, Layouts, and Navigation help reduce duplicated code while keeping the project organized.
-
-### Separation of Concerns
-
-API logic is isolated inside the services folder while browser persistence is managed through reusable utility functions.
-
-### User Experience
-
-Rather than displaying only job listings, the application was designed around a guided workflow that helps users maintain momentum throughout their job search.
-
-### Persistence
-
-Important user information remains available after refreshing the page through browser localStorage.
+I chose a separated frontend and backend architecture because it more closely reflects how modern web applications are built. Keeping each layer independent makes it easier to maintain, test, and expand the application over time.
 
 ---
 
-# Challenges
+## PostgreSQL
 
-Some of the most valuable learning experiences during this project included:
-
-- Working with asynchronous API requests
-- Handling loading, empty, and error states
-- Managing React state across multiple pages
-- Designing reusable components
-- Persisting application data with localStorage
-- Organizing a growing React project into maintainable folders
+Persistent user data was a core requirement for this project. PostgreSQL provided a reliable relational database with strong support for structured data and SQLAlchemy relationships.
 
 ---
 
-# Future Improvements
+## SQLAlchemy ORM
 
-Future versions of Career Companion could include:
-
-- User authentication
-- Cloud database storage
-- Application status tracking
-- Interview scheduling
-- Calendar integration
-- AI-assisted resume feedback
-- Personalized career recommendations
-- Saved searches
-- Advanced filtering
-- Resume version management
-- Analytics dashboard
-- AI-powered career coaching
+Using SQLAlchemy simplified database interactions while allowing the application to model relationships between users, saved jobs, action items, and profiles without writing raw SQL for every operation.
 
 ---
 
-# Known Limitations
+## Session-Based Authentication
 
-Current limitations include:
-
-- Browser-only localStorage persistence
-- No backend database
-- No user authentication
-- Limited filtering options
-- No multi-device synchronization
-- Availability depends on the external API
+The application uses secure session-based authentication so users can sign in once and interact with protected resources without repeatedly sending credentials.
 
 ---
 
-# Testing
+## Multiple Job APIs
 
-The application was manually tested for:
+Instead of relying on a single data source, the backend aggregates opportunities from both Adzuna and USAJOBS. This provides broader search results while keeping the frontend implementation consistent through a single API endpoint.
 
-- Route navigation
-- API requests
-- Search functionality
-- Loading states
-- Error handling
-- Empty states
-- Saved opportunities
-- Resume persistence
-- Action Plan persistence
-- Profile persistence
-- Browser refresh behavior
+---
 
-The application successfully passes a production build using:
+## Pagination
+
+Job searches can return hundreds of opportunities.
+
+Implementing backend pagination reduces payload size, improves response times, and creates a smoother user experience while demonstrating a common production pattern used in REST APIs.
+
+---
+
+## Responsive Design
+
+The interface was designed to remain usable across desktop and mobile screen sizes using responsive layouts rather than maintaining separate versions of the application.
+
+---
+
+# Local Installation
+
+## Clone the repository
 
 ```bash
-npm run build
+git clone https://github.com/ashlibriggs/career-companion.git
 ```
+
+```bash
+cd career-companion
+```
+
+---
+
+## Backend
+
+```bash
+cd backend
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Run the server:
+
+```bash
+python app.py
+```
+
+---
+
+## Frontend
+
+```bash
+cd frontend
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the development server:
+
+```bash
+npm run dev
+```
+
+The application will be available at:
+
+```
+http://localhost:5173
+```
+
+
+# Future Roadmap
+
+Career Companion was intentionally designed with future expansion in mind. The current application provides a solid full-stack foundation while leaving room for additional features that would further support early-career software engineers.
+
+Potential future enhancements include:
+
+- AI-powered resume feedback
+- AI-assisted cover letter generation
+- Personalized job recommendations
+- Interview preparation workspace
+- Goal tracking and career milestones
+- Calendar integration for interviews and follow-ups
+- Email reminders for application deadlines
+- Company research notes
+- Resume version management
+- Document uploads
+- Analytics dashboard for application activity
+- OAuth authentication (Google and LinkedIn)
+- User profile customization
+- Docker deployment
+- Automated testing and CI/CD pipeline
 
 ---
 
 # What I Learned
 
-Building Career Companion strengthened my understanding of:
+Building Career Companion reinforced that successful software development is about more than writing code.
 
-- React component architecture
-- State management
+Throughout this project I gained hands-on experience designing and connecting a complete application across multiple layers of the stack. I learned how frontend and backend systems communicate through REST APIs, how relational databases support persistent user data, and how authentication changes the way an application is structured.
+
+One of the most valuable lessons came from debugging. As the project grew, I encountered integration issues that required tracing data from external APIs through the Flask backend and into the React frontend. Working through those problems strengthened my understanding of API design, state management, data transformations, and the importance of maintaining a consistent contract between the client and server.
+
+I also developed a greater appreciation for planning before building. Taking time to think through user workflows, component organization, and backend architecture resulted in cleaner code and made new features easier to add without major refactoring.
+
+Perhaps the biggest takeaway is that software engineering is an iterative process. Every feature, bug fix, and design decision became an opportunity to improve both the application and my own approach to problem solving.
+
+---
+
+# About Me
+
+I'm a Software Engineering student at Southern Methodist University (SMU) and a career changer with a background in entrepreneurship, education, and customer experience.
+
+Before transitioning into software engineering, I built and operated an online education business where I designed digital learning experiences, developed curriculum, and supported more than a thousand students. That experience taught me how to approach problems from the user's perspective, balance technical decisions with business goals, and build products that solve real problems.
+
+As I continue growing as a software engineer, I'm especially interested in full-stack development, developer tools, AI-powered products, and product-minded engineering. I enjoy building applications that combine thoughtful user experiences with practical technical solutions.
+
+This project represents an important milestone in that journey and reflects the skills I've developed in React, Flask, PostgreSQL, REST APIs, relational databases, authentication, and full-stack application architecture.
+
+---
+
+## Connect With Me
+
+- **GitHub:** [github.com/ashlibriggs](https://github.com/ashlibriggs)
+- **LinkedIn:** [linkedin.com/in/ashli-briggs](https://www.linkedin.com/in/ashli-briggs/)
+
+---
+
+# Acknowledgements
+
+This project was developed as part of the Southern Methodist University (SMU) Software Engineering Bootcamp.
+
+Public job opportunity data is provided by:
+
+- Adzuna Jobs API
+- USAJOBS API
+
+Additional open-source tools and libraries used throughout the project include:
+
+- React
 - React Router
-- Asynchronous JavaScript
-- API integration
-- LocalStorage persistence
-- UI organization
-- Product thinking
-- Incremental feature development
-- Debugging real-world React applications
+- Flask
+- SQLAlchemy
+- PostgreSQL
+- Vite
 
-More importantly, this project reinforced the value of building software around the user's experience rather than simply implementing technical features.
+I appreciate the open-source community for building and maintaining the tools that make projects like this possible.
 
 ---
 
-# Author
+# License
 
-**Ashli Briggs**
+This project is licensed under the MIT License.
 
-Software Engineering Student • Future AI Product Engineer
-
-GitHub:
-https://github.com/ashlibriggs
-
----
-
-## Acknowledgements
-
-This project was developed as part of the SMU Software Engineering Bootcamp (powered by Flatiron School) and represents the first capstone project focused on React development, external API integration, and modern frontend engineering practices.
+See the LICENSE file for additional details.

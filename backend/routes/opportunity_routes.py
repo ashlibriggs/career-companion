@@ -17,22 +17,36 @@ opportunity_routes = Blueprint(
 )
 
 
-DEFAULT_RESULTS_LIMIT = 20
-MAX_RESULTS_LIMIT = 50
+DEFAULT_PER_PAGE = 10
+MAX_PER_PAGE = 50
 DEFAULT_PAGE = 1
 
 
 @opportunity_routes.get("")
 def get_opportunities():
     """
-    Search supported opportunity providers and return normalized jobs.
+    Search supported opportunity providers and return normalized,
+    paginated job results.
 
     Query parameters:
-        search: Required job title or keyword.
-        limit: Optional combined result count. Defaults to 20.
-        page: Optional provider result page. Defaults to 1.
+        search:
+            Required job title or keyword.
+
+        page:
+            Optional results page. Defaults to 1.
+
+        per_page:
+            Optional number of combined results per page.
+            Defaults to 10 and cannot exceed 50.
+
+        limit:
+            Supported as a backward-compatible alternative
+            to per_page.
     """
-    search_term = request.args.get("search", "").strip()
+    search_term = request.args.get(
+        "search",
+        "",
+    ).strip()
 
     if not search_term:
         return jsonify(
@@ -48,17 +62,22 @@ def get_opportunities():
         ), 400
 
     try:
-        results_limit = parse_positive_integer(
-            request.args.get("limit"),
-            default=DEFAULT_RESULTS_LIMIT,
-            maximum=MAX_RESULTS_LIMIT,
-            field_name="limit",
-        )
-
         page = parse_positive_integer(
             request.args.get("page"),
             default=DEFAULT_PAGE,
             field_name="page",
+        )
+
+        raw_per_page = request.args.get("per_page")
+
+        if raw_per_page is None:
+            raw_per_page = request.args.get("limit")
+
+        per_page = parse_positive_integer(
+            raw_per_page,
+            default=DEFAULT_PER_PAGE,
+            maximum=MAX_PER_PAGE,
+            field_name="per_page",
         )
 
     except ValueError as error:
@@ -68,7 +87,9 @@ def get_opportunities():
             }
         ), 400
 
-    provider_results = []
+    adzuna_results = []
+    usajobs_results = []
+
     provider_status = {
         "adzuna": {
             "status": "pending",
@@ -83,11 +104,9 @@ def get_opportunities():
     try:
         adzuna_results = search_adzuna_opportunities(
             search_term=search_term,
-            results_limit=results_limit,
+            results_limit=per_page,
             page=page,
         )
-
-        provider_results.extend(adzuna_results)
 
         provider_status["adzuna"] = {
             "status": "success",
@@ -103,11 +122,9 @@ def get_opportunities():
     try:
         usajobs_results = search_usajobs_opportunities(
             search_term=search_term,
-            limit=results_limit,
+            limit=per_page,
             page=page,
         )
-
-        provider_results.extend(usajobs_results)
 
         provider_status["usajobs"] = {
             "status": "success",
@@ -136,13 +153,40 @@ def get_opportunities():
             }
         ), 502
 
-    opportunities = interleave_provider_results(
-        adzuna_results=locals().get("adzuna_results", []),
-        usajobs_results=locals().get("usajobs_results", []),
+    combined_opportunities = interleave_provider_results(
+        adzuna_results=adzuna_results,
+        usajobs_results=usajobs_results,
     )
 
-    opportunities = deduplicate_opportunities(opportunities)
-    opportunities = opportunities[:results_limit]
+    unique_opportunities = deduplicate_opportunities(
+        combined_opportunities
+    )
+
+    opportunities = unique_opportunities[:per_page]
+
+    has_next = any(
+        provider["status"] == "success"
+        and provider["count"] >= per_page
+        for provider in provider_status.values()
+    )
+
+    pagination = {
+        "page": page,
+        "per_page": per_page,
+        "returned_count": len(opportunities),
+        "has_previous": page > 1,
+        "has_next": has_next,
+        "previous_page": (
+            page - 1
+            if page > 1
+            else None
+        ),
+        "next_page": (
+            page + 1
+            if has_next
+            else None
+        ),
+    }
 
     return jsonify(
         {
@@ -150,8 +194,10 @@ def get_opportunities():
             "count": len(opportunities),
             "results": opportunities,
             "providers": provider_status,
+            "pagination": pagination,
         }
     ), 200
+
 
 def interleave_provider_results(
     adzuna_results,
@@ -161,6 +207,7 @@ def interleave_provider_results(
     Alternate provider results so users see a balanced mix.
     """
     combined_results = []
+
     max_length = max(
         len(adzuna_results),
         len(usajobs_results),
@@ -168,10 +215,14 @@ def interleave_provider_results(
 
     for index in range(max_length):
         if index < len(adzuna_results):
-            combined_results.append(adzuna_results[index])
+            combined_results.append(
+                adzuna_results[index]
+            )
 
         if index < len(usajobs_results):
-            combined_results.append(usajobs_results[index])
+            combined_results.append(
+                usajobs_results[index]
+            )
 
     return combined_results
 
@@ -180,8 +231,8 @@ def deduplicate_opportunities(opportunities):
     """
     Remove likely duplicate jobs while preserving provider order.
 
-    Jobs are treated as duplicates when their normalized title, company,
-    and location match.
+    Jobs are treated as duplicates when their normalized title,
+    company, and location match.
     """
     unique_opportunities = []
     seen_jobs = set()
@@ -217,7 +268,9 @@ def deduplicate_opportunities(opportunities):
             continue
 
         seen_jobs.add(duplicate_key)
-        unique_opportunities.append(opportunity)
+        unique_opportunities.append(
+            opportunity
+        )
 
     return unique_opportunities
 
@@ -227,7 +280,10 @@ def normalize_deduplication_value(value):
     Normalize a provider value for case-insensitive comparison.
     """
     return " ".join(
-        str(value or "").strip().lower().split()
+        str(value or "")
+        .strip()
+        .lower()
+        .split()
     )
 
 
@@ -245,19 +301,29 @@ def parse_positive_integer(
 
     try:
         value = int(raw_value)
+
     except (TypeError, ValueError) as error:
         raise ValueError(
-            f"{field_name.capitalize()} must be a whole number."
+            (
+                f"{field_name.replace('_', ' ').capitalize()} "
+                "must be a whole number."
+            )
         ) from error
 
     if value < 1:
         raise ValueError(
-            f"{field_name.capitalize()} must be at least 1."
+            (
+                f"{field_name.replace('_', ' ').capitalize()} "
+                "must be at least 1."
+            )
         )
 
     if maximum is not None and value > maximum:
         raise ValueError(
-            f"{field_name.capitalize()} cannot exceed {maximum}."
+            (
+                f"{field_name.replace('_', ' ').capitalize()} "
+                f"cannot exceed {maximum}."
+            )
         )
 
     return value
