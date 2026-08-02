@@ -38,7 +38,7 @@ const starterTasks = [
   {
     title: 'Prepare one interview story',
     description:
-      'Practice a concise story about ownership, learning, or problem-solving.',
+      'Practice a concise story about ownership, learning, or problem solving.',
     status: 'pending',
     priority: 'medium',
     estimatedMinutes: 20,
@@ -46,7 +46,7 @@ const starterTasks = [
   {
     title: 'Submit or follow up',
     description:
-      'Complete one concrete application-related action.',
+      'Complete one concrete application related action.',
     status: 'pending',
     priority: 'high',
     estimatedMinutes: 15,
@@ -55,11 +55,38 @@ const starterTasks = [
 
 function ActionPlanPage() {
   const [tasks, setTasks] = useState([])
+
+  const [newActionTitle, setNewActionTitle] =
+    useState('')
+  const [
+    newActionDescription,
+    setNewActionDescription,
+  ] = useState('')
+
+  const [editingTaskId, setEditingTaskId] =
+    useState(null)
+  const [editTitle, setEditTitle] = useState('')
+  const [editDescription, setEditDescription] =
+    useState('')
+
+  const [taskPendingDelete, setTaskPendingDelete] =
+    useState(null)
+
   const [isLoading, setIsLoading] = useState(true)
-  const [isResetting, setIsResetting] = useState(false)
+  const [isCreating, setIsCreating] =
+    useState(false)
+  const [isSavingEdit, setIsSavingEdit] =
+    useState(false)
+  const [isResetting, setIsResetting] =
+    useState(false)
+
   const [updatingTaskId, setUpdatingTaskId] =
     useState(null)
-  const [errorMessage, setErrorMessage] = useState('')
+  const [deletingTaskId, setDeletingTaskId] =
+    useState(null)
+
+  const [errorMessage, setErrorMessage] =
+    useState('')
 
   useEffect(() => {
     let isMounted = true
@@ -115,6 +142,59 @@ function ActionPlanPage() {
     (task) => !task.completed
   )
 
+  const isPageBusy =
+    isCreating ||
+    isSavingEdit ||
+    isResetting ||
+    deletingTaskId !== null
+
+  async function handleCreateAction(event) {
+    event.preventDefault()
+
+    const cleanedTitle = newActionTitle.trim()
+    const cleanedDescription =
+      newActionDescription.trim()
+
+    if (!cleanedTitle) {
+      setErrorMessage(
+        'Enter a title before adding an action.'
+      )
+      return
+    }
+
+    try {
+      setIsCreating(true)
+      setErrorMessage('')
+
+      const createdTask = await createActionItem({
+        title: cleanedTitle,
+        description: cleanedDescription || null,
+        status: 'pending',
+        priority: 'medium',
+      })
+
+      setTasks((currentTasks) => [
+        createdTask,
+        ...currentTasks,
+      ])
+
+      setNewActionTitle('')
+      setNewActionDescription('')
+    } catch (error) {
+      console.error(
+        'Unable to create action item:',
+        error
+      )
+
+      setErrorMessage(
+        error.message ||
+          'Unable to add this action.'
+      )
+    } finally {
+      setIsCreating(false)
+    }
+  }
+
   async function handleToggleTask(task) {
     const nextStatus = task.completed
       ? 'pending'
@@ -153,10 +233,132 @@ function ActionPlanPage() {
     }
   }
 
+  function handleStartEdit(task) {
+    setEditingTaskId(task.id)
+    setEditTitle(task.title)
+    setEditDescription(task.description || '')
+    setErrorMessage('')
+  }
+
+  function handleCancelEdit() {
+    setEditingTaskId(null)
+    setEditTitle('')
+    setEditDescription('')
+  }
+
+  async function handleSaveEdit(event, taskId) {
+    event.preventDefault()
+
+    const cleanedTitle = editTitle.trim()
+    const cleanedDescription =
+      editDescription.trim()
+
+    if (!cleanedTitle) {
+      setErrorMessage(
+        'The action title cannot be empty.'
+      )
+      return
+    }
+
+    try {
+      setIsSavingEdit(true)
+      setErrorMessage('')
+
+      const updatedTask = await updateActionItem(
+        taskId,
+        {
+          title: cleanedTitle,
+          description:
+            cleanedDescription || null,
+        }
+      )
+
+      setTasks((currentTasks) =>
+        currentTasks.map((currentTask) =>
+          currentTask.id === updatedTask.id
+            ? updatedTask
+            : currentTask
+        )
+      )
+
+      handleCancelEdit()
+    } catch (error) {
+      console.error(
+        'Unable to save action item changes:',
+        error
+      )
+
+      setErrorMessage(
+        error.message ||
+          'Unable to save your changes.'
+      )
+    } finally {
+      setIsSavingEdit(false)
+    }
+  }
+
+  function handleRequestDelete(task) {
+    setTaskPendingDelete(task)
+    setErrorMessage('')
+  }
+
+  function handleCancelDelete() {
+    setTaskPendingDelete(null)
+  }
+
+  async function handleConfirmDelete() {
+    if (!taskPendingDelete) {
+      return
+    }
+
+    try {
+      setDeletingTaskId(taskPendingDelete.id)
+      setErrorMessage('')
+
+      await deleteActionItem(taskPendingDelete.id)
+
+      setTasks((currentTasks) =>
+        currentTasks.filter(
+          (currentTask) =>
+            currentTask.id !== taskPendingDelete.id
+        )
+      )
+
+      if (editingTaskId === taskPendingDelete.id) {
+        handleCancelEdit()
+      }
+
+      setTaskPendingDelete(null)
+    } catch (error) {
+      console.error(
+        'Unable to delete action item:',
+        error
+      )
+
+      setErrorMessage(
+        error.message ||
+          'Unable to delete this action.'
+      )
+    } finally {
+      setDeletingTaskId(null)
+    }
+  }
+
   async function handleResetPlan() {
+    const shouldReset =
+      tasks.length === 0 ||
+      window.confirm(
+        'Resetting will replace your current actions with the five starter actions. Continue?'
+      )
+
+    if (!shouldReset) {
+      return
+    }
+
     try {
       setIsResetting(true)
       setErrorMessage('')
+      handleCancelEdit()
 
       await Promise.all(
         tasks.map((task) =>
@@ -186,7 +388,9 @@ function ActionPlanPage() {
       )
 
       try {
-        const currentTasks = await getActionItems()
+        const currentTasks =
+          await getActionItems()
+
         setTasks(currentTasks)
       } catch (refreshError) {
         console.error(
@@ -209,7 +413,7 @@ function ActionPlanPage() {
         <h1>Your action plan</h1>
 
         <p className="mvp-page__intro">
-          Complete a small set of high-value job-search
+          Complete a small set of high value job search
           actions instead of trying to do everything at
           once.
         </p>
@@ -225,11 +429,68 @@ function ActionPlanPage() {
       <div className="mvp-page__grid mvp-page__grid--two-column">
         <PageCard
           title="This week’s priorities"
-          description="Check off each action as you complete it."
+          description="Create, complete, and manage the actions that matter most."
         >
+          <form
+            className="action-plan-form"
+            onSubmit={handleCreateAction}
+          >
+            <div className="action-plan-form__field">
+              <label htmlFor="action-title">
+                Action title
+              </label>
+
+              <input
+                id="action-title"
+                type="text"
+                value={newActionTitle}
+                onChange={(event) =>
+                  setNewActionTitle(
+                    event.target.value
+                  )
+                }
+                placeholder="Example: Update my LinkedIn headline"
+                maxLength={200}
+                disabled={isPageBusy}
+              />
+            </div>
+
+            <div className="action-plan-form__field">
+              <label htmlFor="action-description">
+                Description
+                <span> Optional</span>
+              </label>
+
+              <textarea
+                id="action-description"
+                value={newActionDescription}
+                onChange={(event) =>
+                  setNewActionDescription(
+                    event.target.value
+                  )
+                }
+                placeholder="Add a short note about what success looks like."
+                rows={3}
+                disabled={isPageBusy}
+              />
+            </div>
+
+            <div className="form-actions">
+              <Button
+                type="submit"
+                disabled={isPageBusy}
+              >
+                {isCreating
+                  ? 'Adding action...'
+                  : 'Add action'}
+              </Button>
+            </div>
+          </form>
+
           {isLoading ? (
             <div className="mvp-callout">
               <h3>Loading your action plan</h3>
+
               <p>
                 We’re retrieving your saved actions from
                 Career Companion.
@@ -264,18 +525,20 @@ function ActionPlanPage() {
 
               {tasks.length === 0 ? (
                 <div className="mvp-callout">
-                  <h3>Your plan is ready to begin</h3>
+                  <h3>
+                    Your plan is ready to begin
+                  </h3>
 
                   <p>
-                    Create your starter plan to add five
-                    focused job-search actions to your
-                    account.
+                    Add your own action or create a
+                    starter plan with five focused job
+                    search priorities.
                   </p>
                 </div>
               ) : (
                 <div className="action-list">
                   {tasks.map((task) => (
-                    <label
+                    <div
                       className={`action-item ${
                         task.completed
                           ? 'action-item--complete'
@@ -283,27 +546,137 @@ function ActionPlanPage() {
                       }`}
                       key={task.id}
                     >
-                      <input
-                        type="checkbox"
-                        checked={task.completed}
-                        disabled={
-                          updatingTaskId === task.id ||
-                          isResetting
-                        }
-                        onChange={() =>
-                          handleToggleTask(task)
-                        }
-                      />
+                      {editingTaskId === task.id ? (
+                        <form
+                          className="action-item__edit-form"
+                          onSubmit={(event) =>
+                            handleSaveEdit(
+                              event,
+                              task.id
+                            )
+                          }
+                        >
+                          <div className="form-field">
+                            <label
+                              htmlFor={`edit-title-${task.id}`}
+                            >
+                              Action title
+                            </label>
 
-                      <span className="action-item__copy">
-                        <strong>{task.title}</strong>
+                            <input
+                              id={`edit-title-${task.id}`}
+                              type="text"
+                              value={editTitle}
+                              onChange={(event) =>
+                                setEditTitle(
+                                  event.target.value
+                                )
+                              }
+                              maxLength={200}
+                              disabled={isSavingEdit}
+                            />
+                          </div>
 
-                        <span>
-                          {task.description ||
-                            'No description provided.'}
-                        </span>
-                      </span>
-                    </label>
+                          <div className="form-field">
+                            <label
+                              htmlFor={`edit-description-${task.id}`}
+                            >
+                              Description
+                            </label>
+
+                            <textarea
+                              id={`edit-description-${task.id}`}
+                              value={editDescription}
+                              onChange={(event) =>
+                                setEditDescription(
+                                  event.target.value
+                                )
+                              }
+                              rows={3}
+                              disabled={isSavingEdit}
+                            />
+                          </div>
+
+                          <div className="form-actions">
+                            <Button
+                              type="submit"
+                              disabled={isSavingEdit}
+                            >
+                              {isSavingEdit
+                                ? 'Saving...'
+                                : 'Save changes'}
+                            </Button>
+
+                            <button
+                              type="button"
+                              className="text-button"
+                              onClick={
+                                handleCancelEdit
+                              }
+                              disabled={isSavingEdit}
+                            >
+                              Cancel
+                            </button>
+                          </div>
+                        </form>
+                      ) : (
+                        <>
+                          <input
+                            className="action-item__checkbox"
+                            type="checkbox"
+                            aria-label={`Mark ${task.title} as ${
+                              task.completed
+                                ? 'incomplete'
+                                : 'complete'
+                            }`}
+                            checked={task.completed}
+                            disabled={
+                              updatingTaskId ===
+                                task.id ||
+                              isPageBusy
+                            }
+                            onChange={() =>
+                              handleToggleTask(task)
+                            }
+                          />
+
+                          <span className="action-item__copy">
+                            <strong>
+                              {task.title}
+                            </strong>
+
+                            <span>
+                              {task.description ||
+                                'No description provided.'}
+                            </span>
+                          </span>
+
+                          <div className="action-item__controls">
+                            <button
+                              type="button"
+                              className="text-button"
+                              onClick={() =>
+                                handleStartEdit(task)
+                              }
+                              disabled={isPageBusy}
+                            >
+                              Edit
+                            </button>
+
+                            <button
+                              type="button"
+                              className="text-button text-button--danger"
+                              onClick={() =>
+                                handleRequestDelete(task)
+                              }
+                              disabled={isPageBusy}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   ))}
                 </div>
               )}
@@ -311,7 +684,7 @@ function ActionPlanPage() {
               <div className="form-actions">
                 <Button
                   onClick={handleResetPlan}
-                  disabled={isResetting}
+                  disabled={isPageBusy}
                 >
                   {isResetting
                     ? 'Building your plan...'
@@ -331,7 +704,7 @@ function ActionPlanPage() {
           <div className="mvp-callout">
             <h3>
               {tasks.length === 0
-                ? 'Create your starter plan'
+                ? 'Create your action plan'
                 : completedCount === tasks.length
                   ? 'Plan complete'
                   : 'Choose the next unfinished action'}
@@ -339,9 +712,9 @@ function ActionPlanPage() {
 
             <p>
               {tasks.length === 0
-                ? 'Your starter plan will give you five clear actions to begin building momentum.'
+                ? 'Add one meaningful action or use the starter plan to begin building momentum.'
                 : completedCount === tasks.length
-                  ? 'You completed every action in this plan. Reset it when you are ready to begin another cycle.'
+                  ? 'You completed every action in this plan. Add a new priority when you are ready for your next step.'
                   : nextUnfinishedTask
                     ? `Your next best step is: ${nextUnfinishedTask.title}. Focus on this one action before moving to the next.`
                     : 'Work on one task at a time. Completing a focused action is more valuable than starting five different tasks.'}
@@ -368,6 +741,66 @@ function ActionPlanPage() {
           </dl>
         </PageCard>
       </div>
+
+      {taskPendingDelete && (
+        <div
+          className="confirmation-modal"
+          role="presentation"
+          onMouseDown={handleCancelDelete}
+        >
+          <section
+            className="confirmation-modal__panel"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-action-title"
+            onMouseDown={(event) =>
+              event.stopPropagation()
+            }
+          >
+            <p className="mvp-page__eyebrow">
+              Confirm deletion
+            </p>
+
+            <h2 id="delete-action-title">
+              Remove this action?
+            </h2>
+
+            <p>
+              “{taskPendingDelete.title}” will be
+              permanently removed from your action plan.
+            </p>
+
+            <div className="confirmation-modal__actions">
+              <button
+                type="button"
+                className="text-button"
+                onClick={handleCancelDelete}
+                disabled={
+                  deletingTaskId ===
+                  taskPendingDelete.id
+                }
+              >
+                Keep action
+              </button>
+
+              <button
+                type="button"
+                className="danger-button"
+                onClick={handleConfirmDelete}
+                disabled={
+                  deletingTaskId ===
+                  taskPendingDelete.id
+                }
+              >
+                {deletingTaskId ===
+                taskPendingDelete.id
+                  ? 'Deleting...'
+                  : 'Delete action'}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
     </div>
   )
 }

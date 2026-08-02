@@ -3,12 +3,15 @@ function Button({
   variant = 'primary',
   type = 'button',
   onClick,
+  disabled = false,
+  className = '',
 }) {
   return (
     <button
       type={type}
-      className={`button button--${variant}`}
+      className={`button button--${variant} ${className}`.trim()}
       onClick={onClick}
+      disabled={disabled}
     >
       {children}
     </button>

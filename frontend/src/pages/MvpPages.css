@@ -133,9 +133,36 @@
   cursor: pointer;
 }
 
-.text-button:hover {
+.text-button:hover:not(:disabled) {
   border-color: var(--color-accent, #52796f);
   color: var(--color-accent, #52796f);
+}
+
+.text-button--danger:hover:not(:disabled) {
+  border-color: #a14f4f;
+  color: #8f4040;
+}
+
+.text-button:disabled,
+.danger-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.danger-button {
+  min-height: 2.75rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid #8f4040;
+  border-radius: 0.7rem;
+  background: #8f4040;
+  color: #ffffff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.danger-button:hover:not(:disabled) {
+  background: #773535;
 }
 
 .save-message {
@@ -177,6 +204,59 @@
   font-weight: 600;
   line-height: 1.55;
   overflow-wrap: anywhere;
+}
+
+.action-plan-form {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-border, #dbe3df);
+}
+
+.action-plan-form__field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.action-plan-form__field label {
+  color: var(--color-text-primary, #26332f);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.action-plan-form__field label span {
+  color: var(--color-text-secondary, #74807b);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.action-plan-form__field input,
+.action-plan-form__field textarea {
+  width: 100%;
+  padding: 0.8rem 0.9rem;
+  border: 1px solid var(--color-border, #dbe3df);
+  border-radius: 0.65rem;
+  background: #ffffff;
+  color: var(--color-text-primary, #26332f);
+  font: inherit;
+}
+
+.action-plan-form__field textarea {
+  resize: vertical;
+}
+
+.action-plan-form__field input:focus,
+.action-plan-form__field textarea:focus {
+  border-color: var(--color-accent, #52796f);
+  outline: 2px solid rgb(82 121 111 / 18%);
+  outline-offset: 1px;
+}
+
+.action-plan-form__field input:disabled,
+.action-plan-form__field textarea:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
 }
 
 .action-plan__progress {
@@ -224,30 +304,53 @@
   border: 1px solid var(--color-border, #dbe3df);
   border-radius: 0.8rem;
   background: var(--color-background-soft, #f7f9f8);
-  cursor: pointer;
 }
 
-.action-item input {
+.action-item__checkbox {
   width: 1.15rem;
   height: 1.15rem;
   flex: 0 0 auto;
   margin-top: 0.15rem;
   accent-color: var(--color-accent, #52796f);
+  cursor: pointer;
 }
 
 .action-item__copy {
   display: grid;
+  flex: 1;
   gap: 0.2rem;
+  min-width: 0;
 }
 
 .action-item__copy strong {
   color: var(--color-text-primary, #26332f);
+  overflow-wrap: anywhere;
 }
 
 .action-item__copy span {
   color: var(--color-text-secondary, #62706b);
   font-size: 0.85rem;
   line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.action-item__controls {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.action-item__edit-form {
+  display: grid;
+  flex: 1;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.action-item__edit-form .form-field input,
+.action-item__edit-form .form-field textarea {
+  width: 100%;
 }
 
 .action-item--complete {
@@ -276,6 +379,45 @@
   line-height: 1.6;
 }
 
+.confirmation-modal {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: rgb(24 38 33 / 55%);
+}
+
+.confirmation-modal__panel {
+  width: min(100%, 30rem);
+  padding: 1.5rem;
+  border: 1px solid var(--color-border, #dbe3df);
+  border-radius: 1rem;
+  background: var(--color-surface, #ffffff);
+  box-shadow: 0 1.5rem 4rem rgb(21 37 31 / 25%);
+}
+
+.confirmation-modal__panel h2 {
+  margin: 0;
+  color: var(--color-text-primary, #26332f);
+  font-size: 1.4rem;
+}
+
+.confirmation-modal__panel > p:not(.mvp-page__eyebrow) {
+  margin: 0.75rem 0 0;
+  color: var(--color-text-secondary, #62706b);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.confirmation-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
 @media (max-width: 52rem) {
   .mvp-page__grid--two-column {
     grid-template-columns: 1fr;
@@ -287,18 +429,33 @@
     padding: 1.1rem;
   }
 
-  .form-actions {
+  .form-actions,
+  .confirmation-modal__actions {
     align-items: stretch;
     flex-direction: column;
   }
 
   .form-actions .button,
-  .form-actions .text-button {
+  .form-actions .text-button,
+  .confirmation-modal__actions button {
     width: 100%;
   }
 
   .action-plan__progress-copy {
     flex-direction: column;
     gap: 0.25rem;
+  }
+
+  .action-item {
+    flex-wrap: wrap;
+  }
+
+  .action-item__controls {
+    width: 100%;
+    padding-left: 1.95rem;
+  }
+
+  .action-item__controls .text-button {
+    flex: 1;
   }
 }
