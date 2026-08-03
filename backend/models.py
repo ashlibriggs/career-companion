@@ -57,6 +57,22 @@ class User(db.Model):
         cascade="all, delete-orphan",
     )
 
+    career_profile = db.relationship(
+        "CareerProfile",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        uselist=False,
+        single_parent=True,
+    )
+
+    resume_workspace = db.relationship(
+        "ResumeWorkspace",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        uselist=False,
+        single_parent=True,
+    )
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -68,6 +84,120 @@ class User(db.Model):
 
     def __repr__(self):
         return f"<User {self.email}>"
+
+
+class CareerProfile(db.Model):
+    __tablename__ = "career_profiles"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+    )
+
+    name = db.Column(
+        db.String(200),
+    )
+
+    target_role = db.Column(
+        db.String(200),
+    )
+
+    location = db.Column(
+        db.String(200),
+    )
+
+    weekly_application_goal = db.Column(
+        db.Integer,
+        nullable=False,
+        default=5,
+    )
+
+    career_focus = db.Column(
+        db.Text,
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        server_default=db.func.now(),
+    )
+
+    updated_at = db.Column(
+        db.DateTime,
+        server_default=db.func.now(),
+        onupdate=db.func.now(),
+    )
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=False,
+        unique=True,
+    )
+
+    user = db.relationship(
+        "User",
+        back_populates="career_profile",
+    )
+
+    def __repr__(self):
+        return (
+            f"<CareerProfile for user "
+            f"{self.user_id}>"
+        )
+
+
+class ResumeWorkspace(db.Model):
+    __tablename__ = "resume_workspaces"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+    )
+
+    target_role = db.Column(
+        db.String(200),
+    )
+
+    professional_summary = db.Column(
+        db.Text,
+    )
+
+    skills = db.Column(
+        db.Text,
+    )
+
+    experience_highlights = db.Column(
+        db.Text,
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        server_default=db.func.now(),
+    )
+
+    updated_at = db.Column(
+        db.DateTime,
+        server_default=db.func.now(),
+        onupdate=db.func.now(),
+    )
+
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey("users.id"),
+        nullable=False,
+        unique=True,
+    )
+
+    user = db.relationship(
+        "User",
+        back_populates="resume_workspace",
+    )
+
+    def __repr__(self):
+        return (
+            f"<ResumeWorkspace for user "
+            f"{self.user_id}>"
+        )
 
 
 class SavedJob(db.Model):

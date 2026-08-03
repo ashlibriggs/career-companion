@@ -5,9 +5,10 @@ from flask_migrate import Migrate
 from config import Config, db
 from models import User
 
-from routes.saved_job_routes import saved_job_routes
 from routes.action_item_routes import action_item_routes
 from routes.opportunity_routes import opportunity_routes
+from routes.profile_routes import profile_routes
+from routes.saved_job_routes import saved_job_routes
 
 from utils.auth import get_authenticated_user
 
@@ -21,6 +22,7 @@ migrate = Migrate(app, db)
 app.register_blueprint(saved_job_routes)
 app.register_blueprint(action_item_routes)
 app.register_blueprint(opportunity_routes)
+app.register_blueprint(profile_routes)
 
 CORS(
     app,
@@ -81,12 +83,31 @@ def health_check():
 def signup():
     data = request.get_json(silent=True) or {}
 
-    first_name = data.get("first_name", "").strip()
-    last_name = data.get("last_name", "").strip()
-    email = data.get("email", "").strip().lower()
-    password = data.get("password", "")
+    first_name = data.get(
+        "first_name",
+        "",
+    ).strip()
+    last_name = data.get(
+        "last_name",
+        "",
+    ).strip()
+    email = data.get(
+        "email",
+        "",
+    ).strip().lower()
+    password = data.get(
+        "password",
+        "",
+    )
 
-    if not all([first_name, last_name, email, password]):
+    if not all(
+        [
+            first_name,
+            last_name,
+            email,
+            password,
+        ]
+    ):
         return jsonify(
             {
                 "error": (
@@ -106,7 +127,9 @@ def signup():
             }
         ), 400
 
-    existing_user = User.query.filter_by(email=email).first()
+    existing_user = User.query.filter_by(
+        email=email
+    ).first()
 
     if existing_user:
         return jsonify(
@@ -143,35 +166,54 @@ def signup():
 
     session["user_id"] = user.id
 
-    return jsonify(serialize_user(user)), 201
+    return jsonify(
+        serialize_user(user)
+    ), 201
 
 
 @app.post("/api/auth/login")
 def login():
     data = request.get_json(silent=True) or {}
 
-    email = data.get("email", "").strip().lower()
-    password = data.get("password", "")
+    email = data.get(
+        "email",
+        "",
+    ).strip().lower()
+    password = data.get(
+        "password",
+        "",
+    )
 
     if not email or not password:
         return jsonify(
             {
-                "error": "Email and password are required."
+                "error": (
+                    "Email and password are required."
+                )
             }
         ), 400
 
-    user = User.query.filter_by(email=email).first()
+    user = User.query.filter_by(
+        email=email
+    ).first()
 
-    if user is None or not user.check_password(password):
+    if (
+        user is None
+        or not user.check_password(password)
+    ):
         return jsonify(
             {
-                "error": "Invalid email or password."
+                "error": (
+                    "Invalid email or password."
+                )
             }
         ), 401
 
     session["user_id"] = user.id
 
-    return jsonify(serialize_user(user)), 200
+    return jsonify(
+        serialize_user(user)
+    ), 200
 
 
 @app.get("/api/auth/me")
@@ -181,23 +223,35 @@ def get_current_user():
     if user is None:
         return jsonify(
             {
-                "error": "Authentication required."
+                "error": (
+                    "Authentication required."
+                )
             }
         ), 401
 
-    return jsonify(serialize_user(user)), 200
+    return jsonify(
+        serialize_user(user)
+    ), 200
 
 
 @app.delete("/api/auth/logout")
 def logout():
-    session.pop("user_id", None)
+    session.pop(
+        "user_id",
+        None,
+    )
 
     return jsonify(
         {
-            "message": "Logged out successfully."
+            "message": (
+                "Logged out successfully."
+            )
         }
     ), 200
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    app.run(
+        debug=True,
+        port=5001,
+    )
