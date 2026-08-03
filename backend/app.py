@@ -8,6 +8,7 @@ from models import User
 from routes.action_item_routes import action_item_routes
 from routes.opportunity_routes import opportunity_routes
 from routes.profile_routes import profile_routes
+from routes.resume_routes import resume_routes
 from routes.saved_job_routes import saved_job_routes
 
 from utils.auth import get_authenticated_user
@@ -23,6 +24,7 @@ app.register_blueprint(saved_job_routes)
 app.register_blueprint(action_item_routes)
 app.register_blueprint(opportunity_routes)
 app.register_blueprint(profile_routes)
+app.register_blueprint(resume_routes)
 
 CORS(
     app,
