@@ -28,17 +28,44 @@ class Config:
     SESSION_COOKIE_SAMESITE = "Lax"
     SESSION_COOKIE_SECURE = False
 
-    ADZUNA_APP_ID = os.getenv("ADZUNA_APP_ID")
-    ADZUNA_APP_KEY = os.getenv("ADZUNA_APP_KEY")
-    ADZUNA_COUNTRY = os.getenv("ADZUNA_COUNTRY", "us")
+    ADZUNA_APP_ID = os.getenv(
+        "ADZUNA_APP_ID"
+    )
+    ADZUNA_APP_KEY = os.getenv(
+        "ADZUNA_APP_KEY"
+    )
+    ADZUNA_COUNTRY = os.getenv(
+        "ADZUNA_COUNTRY",
+        "us",
+    )
     ADZUNA_BASE_URL = os.getenv(
         "ADZUNA_BASE_URL",
         "https://api.adzuna.com/v1/api/jobs",
     )
 
-    USAJOBS_API_KEY = os.getenv("USAJOBS_API_KEY")
-    USAJOBS_USER_AGENT = os.getenv("USAJOBS_USER_AGENT")
+    USAJOBS_API_KEY = os.getenv(
+        "USAJOBS_API_KEY"
+    )
+    USAJOBS_USER_AGENT = os.getenv(
+        "USAJOBS_USER_AGENT"
+    )
     USAJOBS_BASE_URL = os.getenv(
         "USAJOBS_BASE_URL",
         "https://data.usajobs.gov/api/search",
+    )
+
+    GEMINI_API_KEY = os.getenv(
+        "GEMINI_API_KEY"
+    )
+    GEMINI_MODEL = os.getenv(
+    "GEMINI_MODEL",
+    "gemini-3.5-flash",
+    )
+    
+    GEMINI_API_BASE_URL = os.getenv(
+        "GEMINI_API_BASE_URL",
+        (
+            "https://generativelanguage."
+            "googleapis.com/v1beta"
+        ),
     )
