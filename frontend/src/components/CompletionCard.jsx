@@ -6,27 +6,34 @@ function CompletionCard({ onContinue }) {
       className="guidance-card"
       aria-labelledby="session-complete-title"
     >
-      <p className="guidance-card__label">Session Complete</p>
+      <p className="guidance-card__label">
+        Session Complete
+      </p>
 
-      <h2 id="session-complete-title">Nice work.</h2>
+      <h2 id="session-complete-title">
+        Nice work.
+      </h2>
 
       <p>
-        You took time to understand what an employer is asking for and
-        identified how your current skills connect to the opportunity.
+        Your progress has been saved and Career Companion has
+        reviewed your updated action plan.
       </p>
 
       <div>
         <p className="guidance-card__detail-label">
-          Here&apos;s your next best step
+          Your next focus is ready
         </p>
 
         <p>
-          Save one opportunity you want to revisit and add it to your tracker.
+          Return to Today to see the next manageable step based
+          on your current progress.
         </p>
       </div>
 
       <div className="guidance-card__actions">
-        <Button onClick={onContinue}>Return to Today</Button>
+        <Button onClick={onContinue}>
+          Return to Today
+        </Button>
       </div>
     </section>
   )
