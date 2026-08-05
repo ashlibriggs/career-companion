@@ -160,6 +160,18 @@ This creates recommendations that are:
 
 ---
 
+## Guided Session
+
+![Guided Session](screenshots/guided-session.png)
+
+---
+
+## Session Complete
+
+![Session Complete](screenshots/session-complete.png)
+
+---
+
 ## Opportunities Search
 
 ![Opportunities](screenshots/opportunities-search.png)
