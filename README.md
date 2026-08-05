@@ -1,171 +1,192 @@
-# Career Companion
+# Career Companion AI
 
-Career Companion is a full-stack web application designed to help aspiring software engineers stay organized throughout their job search. Instead of juggling spreadsheets, notes, bookmarks, and multiple websites, users can manage their opportunities, track applications, organize resumes, and build consistent career habits from one central workspace.
+Career Companion AI is a full stack career management platform designed for bootcamp graduates, career changers, and entry level technology professionals navigating today's competitive job market.
 
-The project was built as the second phase of my Software Engineering capstone and expands the original React application into a production-style full-stack application with authentication, persistent data, relational databases, REST APIs, and a Flask backend.
+Rather than functioning as another job board, Career Companion AI helps users organize every stage of their job search in one place while providing intelligent guidance about what to work on next.
 
-Rather than focusing solely on finding jobs, Career Companion focuses on helping users answer a much more important question every day:
+The application combines traditional software engineering principles with responsible AI implementation. Core product decisions are made through transparent business rules built into the application, while Google's Gemini API is used only to communicate recommendations in a more natural, encouraging, and conversational way.
 
-> **"What's my next best step?"**
-
----
-
-## Why I Built Career Companion
-
-Changing careers into software engineering can feel overwhelming.
-
-There are job boards everywhere, dozens of resumes, interview preparation, networking, application tracking, and an endless list of advice about what to do next.
-
-I wanted to build something that reduced that complexity.
-
-Career Companion combines job discovery with personal productivity so users can spend less time organizing their search and more time making meaningful progress.
-
-Instead of becoming another job board, the application acts as a personal career workspace that helps users stay focused on consistent forward movement.
+This project was built as the final capstone for the SMU Software Engineering Bootcamp and represents the evolution of the Career Companion platform across three milestone projects.
 
 ---
 
-# Features
+## The Problem
 
-## Authentication
+Searching for a first technology role can quickly become overwhelming.
 
-- Secure user registration
-- Login and logout
-- Password hashing
-- Session-based authentication
-- Protected backend endpoints
-- Personalized user data
+Job seekers often struggle to manage:
 
----
+- Job applications
+- Resume revisions
+- Career planning
+- Daily priorities
+- Progress tracking
+- Interview preparation
 
-## Opportunity Search
+Most tools solve only one piece of the process.
 
-Search software engineering jobs from multiple public sources including:
-
-- Adzuna
-- USAJOBS
-
-Features include:
-
-- Keyword search
-- Pagination
-- Company information
-- Job locations
-- Salary information (when available)
-- Remote opportunities
-- Direct application links
-- Save opportunities for later
+Career Companion AI brings everything together into one guided workflow that keeps users focused on their next manageable step.
 
 ---
 
-## Saved Opportunities
+## The Solution
 
-Users can save interesting positions without leaving the application.
+Career Companion AI combines:
 
-Saved opportunities include:
+- Secure user authentication
+- Personalized career profiles
+- Resume workspace
+- Opportunity search
+- Saved job tracker
+- Action plan management
+- AI assisted daily recommendations
 
-- Company
-- Position
-- Location
-- Salary
-- Source
-- Apply URL
-
----
-
-## Application Tracker
-
-Track progress throughout the application process.
-
-Current statuses include:
-
-- Interested
-- Applied
-- Interviewing
-- Offer
-- Rejected
-
-This keeps every opportunity organized in one place instead of relying on spreadsheets or scattered notes.
+Instead of asking users to decide what to do next, the application continuously recommends one clear next step based on their current progress.
 
 ---
 
-## Action Plan
+# Key Features
 
-Career Companion also includes a lightweight productivity system.
+## Secure Authentication
 
-Users can create their own action items such as:
-
-- Update resume
-- Practice LeetCode
-- Send networking message
-- Prepare for interview
-- Follow up with recruiter
-
-Each action item can be:
-
-- Created
-- Updated
-- Completed
-- Deleted
-
----
-
-## Resume Workspace
-
-The Resume page provides a dedicated space for organizing resume content.
-
-Although currently populated with sample data, the page establishes the foundation for future resume editing and document generation features.
+- User registration
+- Login
+- Logout
+- Protected routes
+- Session based authentication
+- User owned resources
 
 ---
 
 ## Career Profile
 
-Users can maintain a personal career profile including:
+Store career information including:
 
+- Target role
+- Preferred location
+- Weekly application goals
 - Career focus
-- Target roles
-- Professional summary
-- Skills
-- Career goals
 
-This creates a central location for information commonly reused across job applications.
+All information is securely stored in PostgreSQL.
 
 ---
 
-# Application Screenshots
+## Resume Workspace
+
+Create and maintain a working resume including:
+
+- Professional summary
+- Skills
+- Experience highlights
+- Target position
+
+Resume information persists across sessions.
+
+---
+
+## Opportunity Search
+
+Search live technology opportunities using multiple external job providers.
+
+Results are normalized into a consistent interface regardless of provider.
+
+Users can:
+
+- Search jobs
+- View descriptions
+- Save opportunities
+- Return later
+
+---
+
+## Application Tracker
+
+Track opportunities through different stages.
+
+Users can:
+
+- Save jobs
+- Monitor progress
+- Organize active opportunities
+- Focus on current priorities
+
+---
+
+## Action Plan
+
+Create personalized career tasks with full CRUD functionality.
+
+Users can:
+
+- Create actions
+- Edit actions
+- Delete actions
+- Mark actions complete
+- Prioritize tasks
+
+---
+
+## Career Companion AI
+
+The application's signature feature.
+
+Career Companion AI evaluates a user's:
+
+- Career Profile
+- Resume Workspace
+- Saved Opportunities
+- Action Plan
+
+It then recommends one clear next step to help the user continue making progress.
+
+Unlike many AI powered applications, the recommendation itself is **not** generated by AI.
+
+Career Companion AI first applies transparent business rules to determine the best recommendation. Google's Gemini API is then used only to communicate those recommendations in a more natural, encouraging, and conversational way.
+
+This creates recommendations that are:
+
+- Explainable
+- Consistent
+- Product driven
+- Human centered
+
+---
+
+# Screenshots
 
 ## Today Dashboard
 
-![Today Dashboard](./screenshots/today-dashboard.png)
+![Today Dashboard](screenshots/today-dashboard.png)
 
 ---
 
-## Opportunity Search
+## Opportunities Search
 
-![Opportunity Search](./screenshots/opportunities-search.png)
+![Opportunities](screenshots/opportunities-search.png)
 
 ---
 
 ## Application Tracker
 
-![Application Tracker](./screenshots/application-tracker.png)
+![Application Tracker](screenshots/application-tracker.png)
 
 ---
 
 ## Resume Workspace
 
-![Resume Workspace](./screenshots/resume-workspace.png)
-
----
-
-## Action Plan
-
-![Action Plan](./screenshots/action-plan.png)
+![Resume Workspace](screenshots/resume-workspace.png)
 
 ---
 
 ## Career Profile
 
-![Career Profile](./screenshots/career-profile.png)
+![Career Profile](screenshots/career-profile.png)
+
+---
+
+## Action Plan
+
+![Action Plan](screenshots/action-plan.png)
 
 ---
 
@@ -175,125 +196,150 @@ This creates a central location for information commonly reused across job appli
 
 - React
 - React Router
-- JavaScript (ES6+)
-- CSS3
+- JavaScript
+- CSS
 - Vite
-
-### Frontend Responsibilities
-
-- Client-side routing
-- Authentication flow
-- Form handling
-- API communication
-- State management
-- Responsive interface
-- Loading and error states
-
----
 
 ## Backend
 
-- Python
 - Flask
 - SQLAlchemy
-- Flask-CORS
+- Flask Sessions
+- Flask Migrate
+
+## Database
+
 - PostgreSQL
 
-### Backend Responsibilities
+## AI
 
-- Authentication
-- REST API
-- CRUD operations
-- Session management
-- Database relationships
-- External API integration
-- Pagination
-
----
+- Google Gemini API
 
 ## External APIs
 
-- Adzuna Jobs API
-- USAJOBS API
+- Adzuna
+- USAJobs
 
----
-
-## Development Tools
+## Development
 
 - Git
 - GitHub
 - VS Code
-- Postman
-- npm
-- pip
-- PostgreSQL
 
----
 
 # System Architecture
 
+Career Companion AI follows a modern full stack architecture with a clear separation of concerns between the frontend, backend, database, recommendation engine, and AI enhancement layer.
+
 ```mermaid
-flowchart LR
+flowchart TD
 
 A[React Frontend]
 
 B[Flask REST API]
 
-C[(PostgreSQL)]
+C[Recommendation Service]
 
-D[Adzuna API]
+D[(PostgreSQL)]
 
-E[USAJOBS API]
+E[Career Companion Rules]
+
+F[Google Gemini API]
+
+G[External Job APIs]
 
 A -->|HTTP Requests| B
 
-B -->|SQLAlchemy| C
+B --> C
 
-B -->|Job Search| D
+C --> D
 
-B -->|Federal Jobs| E
+C --> E
 
-C --> B
+E --> F
+
+B --> G
+
+D --> B
 
 B --> A
 ```
 
 ---
 
-# High-Level Application Flow
+# AI Recommendation Architecture
+
+One of the primary design goals for Career Companion AI was building an AI experience that remains transparent, predictable, and user centered.
+
+Rather than allowing a language model to determine what a user should do next, Career Companion AI first evaluates the user's current progress using deterministic product rules.
+
+Those rules analyze:
+
+- Career Profile
+- Resume Workspace
+- Saved Opportunities
+- Action Plan
+
+Once the application determines the user's Next Best Step, Google's Gemini API transforms that recommendation into supportive coaching language while preserving the original product decision.
+
+```text
+Career Profile
+        │
+Resume Workspace
+        │
+Saved Opportunities
+        │
+Action Plan
+        │
+Recommendation Engine
+        │
+Transparent Product Rules
+        │
+Gemini Language Enhancement
+        │
+Today's Focus
+```
+
+This architecture keeps recommendations:
+
+- Explainable
+- Predictable
+- Consistent
+- Under application control
+
+while still providing a natural conversational experience.
+
+---
+
+# High Level Application Flow
 
 ```mermaid
 flowchart TD
 
-User --> Login
+User
 
-Login --> Dashboard
+User --> Authentication
 
-Dashboard --> Opportunities
+Authentication --> TodayDashboard
 
-Dashboard --> Tracker
+TodayDashboard --> RecommendationEngine
 
-Dashboard --> ActionPlan
+RecommendationEngine --> GuidedSession
 
-Dashboard --> Resume
+GuidedSession --> ActionPlan
 
-Dashboard --> Profile
+ActionPlan --> PostgreSQL
 
-Opportunities --> SaveJob
+PostgreSQL --> RecommendationEngine
 
-SaveJob --> Database
-
-Tracker --> Database
-
-ActionPlan --> Database
-
-Profile --> Database
+RecommendationEngine --> UpdatedTodaysFocus
 ```
 
+---
 
 # REST API
 
-The Flask backend exposes a RESTful API that separates the frontend from the application's business logic and database layer. The React application communicates exclusively through these endpoints, allowing the frontend and backend to evolve independently.
+Career Companion AI exposes a RESTful backend that separates the React interface from application logic and persistent storage.
 
 ---
 
@@ -302,9 +348,17 @@ The Flask backend exposes a RESTful API that separates the frontend from the app
 | Method | Endpoint | Description |
 |---------|----------|-------------|
 | POST | `/api/auth/signup` | Register a new user |
-| POST | `/api/auth/login` | Authenticate an existing user |
-| POST | `/api/auth/logout` | End the current session |
-| GET | `/api/auth/me` | Return the currently authenticated user |
+| POST | `/api/auth/login` | Authenticate a user |
+| GET | `/api/auth/me` | Return the authenticated user |
+| DELETE | `/api/auth/logout` | End the current session |
+
+---
+
+## AI Recommendation
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/recommendation` | Returns the user's personalized Next Best Step |
 
 ---
 
@@ -312,21 +366,7 @@ The Flask backend exposes a RESTful API that separates the frontend from the app
 
 | Method | Endpoint | Description |
 |---------|----------|-------------|
-| GET | `/api/opportunities` | Search opportunities from Adzuna and USAJOBS |
-
-### Query Parameters
-
-| Parameter | Description |
-|------------|-------------|
-| `search` | Search keyword |
-| `page` | Current page number |
-| `limit` | Results per page |
-
-Example:
-
-```http
-GET /api/opportunities?search=frontend&page=1&limit=10
-```
+| GET | `/api/opportunities` | Search opportunities from multiple public APIs |
 
 ---
 
@@ -334,9 +374,9 @@ GET /api/opportunities?search=frontend&page=1&limit=10
 
 | Method | Endpoint | Description |
 |---------|----------|-------------|
-| GET | `/api/saved-jobs` | Retrieve saved jobs |
+| GET | `/api/saved-jobs` | Retrieve saved opportunities |
 | POST | `/api/saved-jobs` | Save a new opportunity |
-| DELETE | `/api/saved-jobs/<id>` | Remove a saved job |
+| DELETE | `/api/saved-jobs/<id>` | Remove a saved opportunity |
 
 ---
 
@@ -345,159 +385,168 @@ GET /api/opportunities?search=frontend&page=1&limit=10
 | Method | Endpoint | Description |
 |---------|----------|-------------|
 | GET | `/api/action-items` | Retrieve action items |
-| POST | `/api/action-items` | Create an action item |
-| PATCH | `/api/action-items/<id>` | Update an action item |
-| DELETE | `/api/action-items/<id>` | Delete an action item |
+| POST | `/api/action-items` | Create action item |
+| PATCH | `/api/action-items/<id>` | Update action item |
+| DELETE | `/api/action-items/<id>` | Delete action item |
 
 ---
 
-## Profile
+## Career Profile
 
 | Method | Endpoint | Description |
 |---------|----------|-------------|
-| GET | `/api/profile` | Retrieve user profile |
+| GET | `/api/profile` | Retrieve career profile |
 | PATCH | `/api/profile` | Update career profile |
+
+---
+
+## Resume Workspace
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/resume` | Retrieve resume workspace |
+| PATCH | `/api/resume` | Update resume workspace |
 
 ---
 
 # Database Design
 
-Career Companion uses PostgreSQL with SQLAlchemy ORM to model the application's persistent data.
+Career Companion AI stores user data in PostgreSQL using SQLAlchemy ORM.
 
-The schema is intentionally small, making it easy to extend while demonstrating core relational database concepts.
+Each authenticated user owns their own:
 
-## Entity Relationship Diagram
+- Career Profile
+- Resume Workspace
+- Saved Opportunities
+- Action Plan
+
+This creates complete separation between users while allowing Career Companion AI to personalize recommendations.
 
 ```mermaid
 erDiagram
 
-USER ||--o{ SAVED_JOB : saves
+USER ||--|| CAREER_PROFILE : owns
+
+USER ||--|| RESUME_WORKSPACE : owns
+
+USER ||--o{ SAVED_JOB : owns
 
 USER ||--o{ ACTION_ITEM : owns
 
-USER ||--|| PROFILE : has
-
 USER {
-    int id
-    string first_name
-    string last_name
-    string email
-    string password_hash
+
+int id
+
+string email
+
+string password_hash
+
 }
 
-SAVED_JOB {
-    int id
-    string title
-    string company
-    string location
-    string salary
-    string source
-    string apply_url
+CAREER_PROFILE {
+
+int id
+
+string target_role
+
+string location
+
+string career_focus
+
+}
+
+RESUME_WORKSPACE {
+
+int id
+
+string summary
+
+string skills
+
+string experience
+
 }
 
 ACTION_ITEM {
-    int id
-    string title
-    boolean completed
+
+int id
+
+string title
+
+string priority
+
+string status
+
 }
 
-PROFILE {
-    int id
-    string career_focus
-    string professional_summary
-    string target_role
-    string skills
+SAVED_JOB {
+
+int id
+
+string title
+
+string company
+
+string source
+
 }
-```
-
----
-
-# Project Structure
-
-```text
-career-companion/
-│
-├── backend/
-│   ├── app.py
-│   ├── config.py
-│   ├── models.py
-│   ├── seed.py
-│   ├── migrations/
-│   └── requirements.txt
-│
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── context/
-│   │   ├── hooks/
-│   │   ├── layouts/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   ├── styles/
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   │
-│   ├── public/
-│   └── package.json
-│
-├── screenshots/
-├── README.md
-└── .gitignore
 ```
 
 ---
 
 # Engineering Decisions
 
-Every project involves tradeoffs. Rather than adding features simply because they were available, I tried to make decisions that improved the overall product while keeping the application maintainable.
+Every feature within Career Companion AI was designed with one goal:
+
+Help users consistently identify and complete the next meaningful step in their job search.
+
+---
+
+## Transparent AI Decision Making
+
+One of the most important engineering decisions in this project was separating product intelligence from language generation.
+
+Rather than allowing a language model to make product decisions, I designed a recommendation engine that uses deterministic business rules to choose the user's next best step before using Gemini to communicate those recommendations in a more natural, encouraging, and conversational way.
+
+This architecture creates recommendations that remain explainable, predictable, and aligned with the product's goals while still providing users with a supportive AI experience.
+
+---
 
 ## React + Flask
 
-I chose a separated frontend and backend architecture because it more closely reflects how modern web applications are built. Keeping each layer independent makes it easier to maintain, test, and expand the application over time.
+Separating the frontend and backend creates a maintainable architecture where each layer has a clear responsibility while communicating through REST APIs.
 
 ---
 
 ## PostgreSQL
 
-Persistent user data was a core requirement for this project. PostgreSQL provided a reliable relational database with strong support for structured data and SQLAlchemy relationships.
+Persistent storage allows users to build progress over time rather than restarting every session.
 
 ---
 
-## SQLAlchemy ORM
+## SQLAlchemy
 
-Using SQLAlchemy simplified database interactions while allowing the application to model relationships between users, saved jobs, action items, and profiles without writing raw SQL for every operation.
-
----
-
-## Session-Based Authentication
-
-The application uses secure session-based authentication so users can sign in once and interact with protected resources without repeatedly sending credentials.
+Using SQLAlchemy simplified relational data modeling while keeping application code organized and readable.
 
 ---
 
-## Multiple Job APIs
+## Session Authentication
 
-Instead of relying on a single data source, the backend aggregates opportunities from both Adzuna and USAJOBS. This provides broader search results while keeping the frontend implementation consistent through a single API endpoint.
-
----
-
-## Pagination
-
-Job searches can return hundreds of opportunities.
-
-Implementing backend pagination reduces payload size, improves response times, and creates a smoother user experience while demonstrating a common production pattern used in REST APIs.
+Session based authentication keeps user data secure while providing a seamless experience throughout the application.
 
 ---
 
-## Responsive Design
+## Recommendation Refresh
 
-The interface was designed to remain usable across desktop and mobile screen sizes using responsive layouts rather than maintaining separate versions of the application.
+Completing a guided session immediately updates PostgreSQL, refreshes the user's progress, and generates a new personalized recommendation without requiring a manual page refresh.
+
+This creates an experience where Career Companion AI adapts alongside the user's progress.
 
 ---
 
 # Local Installation
 
-## Clone the repository
+## Clone Repository
 
 ```bash
 git clone https://github.com/ashlibriggs/career-companion.git
@@ -507,47 +556,23 @@ git clone https://github.com/ashlibriggs/career-companion.git
 cd career-companion
 ```
 
----
-
 ## Backend
 
 ```bash
 cd backend
-```
-
-Install dependencies:
-
-```bash
 pip install -r requirements.txt
-```
-
-Run the server:
-
-```bash
 python app.py
 ```
-
----
 
 ## Frontend
 
 ```bash
 cd frontend
-```
-
-Install dependencies:
-
-```bash
 npm install
-```
-
-Run the development server:
-
-```bash
 npm run dev
 ```
 
-The application will be available at:
+Open:
 
 ```
 http://localhost:5173
@@ -556,23 +581,21 @@ http://localhost:5173
 
 # Future Roadmap
 
-Career Companion was intentionally designed with future expansion in mind. The current application provides a solid full-stack foundation while leaving room for additional features that would further support early-career software engineers.
+Career Companion AI was intentionally designed as a strong MVP while leaving room for future expansion. The current application establishes a solid full stack foundation that can continue evolving into a comprehensive AI powered career management platform.
 
-Potential future enhancements include:
+Future enhancements include:
 
-- AI-powered resume feedback
-- AI-assisted cover letter generation
-- Personalized job recommendations
-- Interview preparation workspace
-- Goal tracking and career milestones
-- Calendar integration for interviews and follow-ups
-- Email reminders for application deadlines
-- Company research notes
+- AI interview preparation with personalized coaching
+- Resume scoring against saved job descriptions
+- AI assisted networking message generation
+- Weekly career progress summaries
+- Personalized learning recommendations
+- Company research workspace
+- Calendar integration for interviews and application deadlines
 - Resume version management
-- Document uploads
-- Analytics dashboard for application activity
-- OAuth authentication (Google and LinkedIn)
-- User profile customization
+- Cover letter workspace
+- Application analytics dashboard
+- Google and LinkedIn OAuth authentication
 - Docker deployment
 - Automated testing and CI/CD pipeline
 
@@ -580,47 +603,57 @@ Potential future enhancements include:
 
 # What I Learned
 
-Building Career Companion reinforced that successful software development is about more than writing code.
+Building Career Companion AI reinforced that successful software engineering is about far more than writing code.
 
-Throughout this project I gained hands-on experience designing and connecting a complete application across multiple layers of the stack. I learned how frontend and backend systems communicate through REST APIs, how relational databases support persistent user data, and how authentication changes the way an application is structured.
+Throughout this project, I gained hands on experience designing, connecting, and refining a complete application across every layer of the stack. I strengthened my understanding of React, Flask, PostgreSQL, REST APIs, authentication, relational database design, and the communication between frontend and backend systems.
 
-One of the most valuable lessons came from debugging. As the project grew, I encountered integration issues that required tracing data from external APIs through the Flask backend and into the React frontend. Working through those problems strengthened my understanding of API design, state management, data transformations, and the importance of maintaining a consistent contract between the client and server.
+As the application evolved, I also learned that the best technical solution is not always the most complex one. Some of the most valuable improvements came from simplifying user workflows, improving application state management, and designing software that feels intuitive rather than overwhelming.
 
-I also developed a greater appreciation for planning before building. Taking time to think through user workflows, component organization, and backend architecture resulted in cleaner code and made new features easier to add without major refactoring.
+One of the most meaningful lessons from this project came from integrating artificial intelligence responsibly into a real application.
 
-Perhaps the biggest takeaway is that software engineering is an iterative process. Every feature, bug fix, and design decision became an opportunity to improve both the application and my own approach to problem solving.
+Rather than allowing a language model to make product decisions, I designed a recommendation engine that uses deterministic business rules to choose each user's next best step before using Google's Gemini API to communicate those recommendations in a more natural, encouraging, and conversational way.
+
+That experience fundamentally changed how I think about AI.
+
+I no longer see AI as something that replaces engineering or product thinking. Instead, I see it as a powerful assistant that can improve communication, reduce friction, and enhance the user experience while keeping the application's business logic transparent, predictable, and under the developer's control.
+
+Perhaps the biggest lesson from Career Companion AI is that thoughtful software design begins long before writing code. Every architectural decision, database relationship, user workflow, and AI integration should ultimately serve the people using the product.
+
+That mindset is something I will continue carrying into every future project.
 
 ---
 
 # About Me
 
-I'm a Software Engineering student at Southern Methodist University (SMU) and a career changer with a background in entrepreneurship, education, and customer experience.
+I'm a Software Engineering student at Southern Methodist University (SMU) and a career changer with a background in entrepreneurship, digital education, and customer experience.
 
-Before transitioning into software engineering, I built and operated an online education business where I designed digital learning experiences, developed curriculum, and supported more than a thousand students. That experience taught me how to approach problems from the user's perspective, balance technical decisions with business goals, and build products that solve real problems.
+Before transitioning into software engineering, I founded and operated an online education business where I designed digital learning experiences, developed curriculum, and supported more than one thousand students. That experience strengthened my ability to solve problems from the user's perspective while balancing technical decisions with business goals.
 
-As I continue growing as a software engineer, I'm especially interested in full-stack development, developer tools, AI-powered products, and product-minded engineering. I enjoy building applications that combine thoughtful user experiences with practical technical solutions.
+Today I'm especially interested in full stack software engineering, AI powered products, developer tools, and product minded engineering.
 
-This project represents an important milestone in that journey and reflects the skills I've developed in React, Flask, PostgreSQL, REST APIs, relational databases, authentication, and full-stack application architecture.
+Career Companion AI represents the culmination of my software engineering capstone and reflects my growth in building modern full stack applications using React, Flask, PostgreSQL, REST APIs, authentication, relational databases, and responsible AI integration.
 
 ---
 
 ## Connect With Me
 
-- **GitHub:** [github.com/ashlibriggs](https://github.com/ashlibriggs)
-- **LinkedIn:** [linkedin.com/in/ashli-briggs](https://www.linkedin.com/in/ashli-briggs/)
+**GitHub**
+
+https://github.com/ashlibriggs
+
+**LinkedIn**
+
+https://www.linkedin.com/in/ashli-briggs/
 
 ---
 
 # Acknowledgements
 
-This project was developed as part of the Southern Methodist University (SMU) Software Engineering Bootcamp.
+Career Companion AI was developed as the final capstone project for the Southern Methodist University (SMU) Software Engineering Bootcamp.
 
-Public job opportunity data is provided by:
+This project would not have been possible without the excellent open source community whose libraries, frameworks, and tools continue to make software development more accessible.
 
-- Adzuna Jobs API
-- USAJOBS API
-
-Additional open-source tools and libraries used throughout the project include:
+Technologies and services used throughout the project include:
 
 - React
 - React Router
@@ -628,8 +661,11 @@ Additional open-source tools and libraries used throughout the project include:
 - SQLAlchemy
 - PostgreSQL
 - Vite
+- Google Gemini API
+- Adzuna Jobs API
+- USAJOBS API
 
-I appreciate the open-source community for building and maintaining the tools that make projects like this possible.
+I am grateful to the instructors, classmates, and open source contributors whose work and feedback supported my learning throughout this journey.
 
 ---
 
